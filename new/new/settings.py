@@ -41,7 +41,9 @@ INSTALLED_APPS = [
     #mine
     'form',
     'polls',
-    'comment'
+    'comment',
+    'accountant',
+    'user'
 ]
 
 MIDDLEWARE = [
