@@ -16,11 +16,13 @@
   <input type="submit" value="Vote">
 </form>
 
+{% if user.is_staff %}
 <form action="{% url 'polls:save_choice' question.id %}" method="post">
   {% csrf_token %}
   <input type="text" name="choice">
   <input type="submit" value="Add Choice">
 </form>
+{% endif %}
 
 <h3>Comments:</h3>
 <ul>
