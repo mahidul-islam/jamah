@@ -5,7 +5,7 @@ from django.http import Http404
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.utils import timezone
-from .models import Question, Choice, Comment
+from .models import Question, Choice, Comment, Voter
 
 
 def index(request):
@@ -31,41 +31,78 @@ def result(request, question_id):
 def vote(request, question_id):
     question = Question.objects.get(pk = question_id)
     try:
-        choice = question.choice_set.get(pk = request.POST['choice'])
+        # see if the user already voted for the question
+        voter = question.voter_set.get(voter = request.user)
+        # print(voter)
     except:
+        # now we know that the user didnot vote
+        try:
+            # check if voter selected a choice
+            choice = question.choice_set.get(pk = request.POST['choice'])
+        except:
+            # voter didnot selected a choice
+            context = {
+                'error_message':'ERROR: you didnot select a choice',
+                'question':question
+            }
+            template = loader.get_template('polls/detail.html')
+            return HttpResponse(template.render(context, request))
+        else:
+            # voter did select
+            choice.votes += 1
+            choice.save()
+            Voter(question = question, voter = request.user, choice_no = choice.id).save()
+            return HttpResponseRedirect(reverse('polls:result', args = (question.id,)))
+    else:
+        # the voter already voted
         context = {
-            'error_message':'ERROR: you didnot select a choice',
-            'question':question
+            'error_message':'ERROR: you already voted',
+            'question':question,
+            'change':'change'
         }
         template = loader.get_template('polls/detail.html')
         return HttpResponse(template.render(context, request))
-    else:
-        choice.votes += 1
-        choice.save()
-        return HttpResponseRedirect(reverse('polls:result', args = (question.id,)))
 
 
 def detail(request, question_id):
     try:
         question = Question.objects.get(pk = question_id)
         context = {'question': question}
-        templa = loader.get_template('polls/detail.html')
+        template = loader.get_template('polls/detail.html')
     except Question.DoesNotExist:
         raise Http404('question does not exist')
-    return HttpResponse(templa.render(context, request))
+    return HttpResponse(template.render(context, request))
 
 def save_comment(request, question_id):
     question = Question.objects.get(pk = question_id)
     comment_text = request.POST['comment']
-    Comment(comment_text = comment_text, pub_date = timezone.now(), question = question).save()
+    Comment(comment_text=comment_text, pub_date=timezone.now(), question=question, commenter=request.user).save()
     return HttpResponseRedirect(reverse('polls:detail', args = (question_id,)))
 
 def save_question(request):
     question_text = request.POST['question']
-    Question(question_text = question_text, pub_date = timezone.now()).save()
+    Question(question_text = question_text, pub_date = timezone.now(), creator = request.user).save()
     return HttpResponseRedirect(reverse('polls:index'))
 
 def save_choice(request, question_id):
     question = Question.objects.get(pk = question_id)
-    Choice(choice_text = request.POST['choice'], question = question, votes = 0).save()
+    Choice(choice_text = request.POST['choice'], question = question, votes = 0, creator=request.user).save()
     return HttpResponseRedirect(reverse('polls:detail', args = (question_id,)))
+
+def change_vote(request, question_id):
+    question = Question.objects.get(pk = question_id)
+    print(question.question_text)
+    voter = question.voter_set.get(voter = request.user)
+    print(voter)
+    choice_no = voter.choice_no
+    choice = question.choice_set.get(pk = choice_no)
+    choice.votes -= 1
+    print(choice.votes)
+    template = loader.get_template('polls/detail.html')
+    context ={
+        'error_message':'Please Vote Again',
+        'question':question
+    }
+    voter.delete()
+    choice.save()
+    return HttpResponse(template.render(context, request))

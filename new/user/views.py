@@ -1,6 +1,6 @@
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import login, authenticate
-from django.contrib.auth.forms import UserCreationForm
+from .forms import MyUserCreationForm
 from django.template import loader
 from django.shortcuts import render, redirect
 from django.urls import reverse
@@ -8,7 +8,7 @@ from django.urls import reverse
 
 def SignUp(request):
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = MyUserCreationForm(request.POST)
         print(form.is_valid())
         if form.is_valid():
             form.save()
@@ -20,7 +20,7 @@ def SignUp(request):
 
     else:
         print('method is not Post')
-        form = UserCreationForm()
+        form = MyUserCreationForm()
 
     template = loader.get_template('registration/signup.html')
     return HttpResponse(template.render({'form':form}, request))

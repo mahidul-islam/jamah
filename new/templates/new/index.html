@@ -1,13 +1,11 @@
 <h1>Various Things</h1>
 
-<a href="{% url 'signup' %}">Sign Up</a>
-
-<a href="{% url 'login' %}">Log In</a>
-<a href="{% url 'logout' %}">Log Out</a>
-<a href="{% url 'polls:index' %}">Polls</a>
-
-
-<br>
+<ul>
+  <li><a href="{% url 'signup' %}">Sign Up</a></li>
+  <li><a href="{% url 'login' %}">Log In</a></li>
+  <li><a href="{% url 'logout' %}">Log Out</a></li>
+  <li><a href="{% url 'polls:index' %}">Polls</a></li>
+</ul>
 <br>
 {% if user.is_authenticated %}
   <p>Hi {{ user.username }}</p>

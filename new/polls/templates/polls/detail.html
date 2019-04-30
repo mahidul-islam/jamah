@@ -1,22 +1,36 @@
 <h3>Question details</h3>
-
 <h4><a href="{% url 'polls:index' %}">Back To Questions</a></h4>
+<h4><a href="{% url 'home' %}">Back To Home</a></h4>
 
-<h1>{{question.question_text}}</h1>
+
+<h1>{{question.question_text}}{% if question.creator %},
+                                  ------- || Asked by -- {{question.creator.username}} {% endif %}</h1>
+
 
 {% if error_message %}<p><strong> {{error_message}} </strong></p>{% endif %}
+{% if change %}
+<h4>Want to Change VOTE?</h4>
+<form action="{% url 'polls:change_vote' question.id %}" method="post">
+  {% csrf_token %}
+  <input type="submit" value="Change!">
+</form>
+{% endif %}
+<br> <br>
 
 <form action="{% url 'polls:vote' question.id %}" method="post">
   {% csrf_token %}
   {% for choice in question.choice_set.all %}
   <input type="radio" name="choice" value="{{choice.id}}" id="choice{{forloop.counter}}">
-  <label for="choice{{ forloop.counter }}"> {{choice.choice_text}} </label> <br>
+  <label for="choice{{ forloop.counter }}"> {{choice.choice_text}}{% if choice.creator %},
+                                    ------- || added by -- {{choice.creator.username}} {% else %},
+                                    ------- || added by -- Anonimous {% endif %} </label>
+                                    <br>
   {% endfor %}
   <br>
   <input type="submit" value="Vote">
 </form>
 
-{% if user.is_staff %}
+{% if user.is_staff or user == question.creator %}
 <form action="{% url 'polls:save_choice' question.id %}" method="post">
   {% csrf_token %}
   <input type="text" name="choice">
@@ -27,7 +41,9 @@
 <h3>Comments:</h3>
 <ul>
 {% for comment in question.comment_set.all %}
-  <li>{{comment.comment_text}}</li>
+  <li>{{comment.comment_text}}{% if comment.commenter %},
+                ------- || added by -- {{comment.commenter.username}} {% else %},
+                ------- || added by -- Anonimous {% endif %}</li>
 {% endfor %}
 </ul>
 

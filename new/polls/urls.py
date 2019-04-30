@@ -12,4 +12,5 @@ urlpatterns = [
     path('<int:question_id>/comment/save', views.save_comment, name='save_comment'),
     path('<int:question_id>/choice/save', views.save_choice, name='save_choice'),
     path('question/save', views.save_question, name='save_question'),
+    path('<int:question_id>/change_vote', views.change_vote, name='change_vote'),
 ]
