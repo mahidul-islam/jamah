@@ -1,7 +1,9 @@
-<h2>Log In</h2>
+<h2>Sign Up</h2>
+
 <h4><a href="{% url 'home' %}"> back </a></h4>
+
 <form method="post">
   {% csrf_token %}
   {{ form.as_p }}
-  <input type="submit" name="" value="LogIn">
+  <input type="submit" value="Sign Up">
 </form>
