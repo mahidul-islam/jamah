@@ -1,5 +1,7 @@
 <h1>{{question.question_text}}</h1>
 
+<h4><a href="{% url 'home' %}">Back To Home</a></h4>
+
 {% for choice in question.choice_set.all %}
 
 <ul>

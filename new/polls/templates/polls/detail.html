@@ -1,5 +1,7 @@
 <h3>Question details</h3>
 
+<h4><a href="{% url 'polls:index' %}">Back To Questions</a></h4>
+
 <h1>{{question.question_text}}</h1>
 
 {% if error_message %}<p><strong> {{error_message}} </strong></p>{% endif %}
