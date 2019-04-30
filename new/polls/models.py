@@ -1,6 +1,6 @@
 from django.db import models
 from django.conf import settings
-from django.db.models.signals import post_save
+# from django.db.models.signals import post_save
 
 
 class Question(models.Model):
@@ -35,6 +35,6 @@ class Comment(models.Model):
         return ('Comment of Question{}').format(self.question.id)
 
 
-def save_commenter(sender, instance, **kwargs):
-    pass
-post_save.connect(save_commenter, sender=Comment)
+# def save_commenter(sender, instance, **kwargs):
+#     pass
+# post_save.connect(save_commenter, sender=Comment)

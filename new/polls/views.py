@@ -106,3 +106,10 @@ def change_vote(request, question_id):
     voter.delete()
     choice.save()
     return HttpResponse(template.render(context, request))
+
+def delete_question(request, question_id):
+    question = Question.objects.get(pk = question_id)
+    question.delete()
+    template = loader.get_template('polls/index.html')
+    context = {}
+    return HttpResponseRedirect(reverse('polls:index'))
