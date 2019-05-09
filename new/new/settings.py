@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'form',
     'polls',
     'comment',
-    'accountant',
+    'event',
     'user'
 ]
 
