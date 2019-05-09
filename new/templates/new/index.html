@@ -5,6 +5,7 @@
   <li><a href="{% url 'login' %}">Log In</a></li>
   <li><a href="{% url 'logout' %}">Log Out</a></li>
   <li><a href="{% url 'polls:index' %}">Polls</a></li>
+  <li><a href="{% url 'event:index' %}">Events</a></li>
 </ul>
 <br>
 {% if user.is_authenticated %}

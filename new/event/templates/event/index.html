@@ -1,0 +1,35 @@
+{% if message %}
+<h3>{{message}}</h3>
+{% endif %}
+<a href="{% url 'home' %}">Back to Home</a>
+<br>
+<br>
+
+{% if user.is_authenticated %}
+<h3>Create a new EVENT</h3>
+
+<form action="{% url 'event:create' %}" method="post">
+  {% csrf_token %}
+  <input type="text" name="event">
+  <button type="submit">Create</button>
+</form>
+
+<br><br>
+<h3>Below are all the event YOU created:</h3>
+<ul>
+  {% for event in eventOfMine %}
+  <li><a href="{% url 'event:detail' event.id %}">{{event.name}}</a></li>
+  {% endfor %}
+</ul>
+<br>
+<br>
+<h3>Below are all the event YOU are a part of:</h3>
+<ul>
+  {% for event in eventOfOthers %}
+  <li><a href="{% url 'event:detail' event.id %}">{{event.name}}</a></li>
+  {% endfor %}
+  <!-- TODO: Access all the list  -->
+</ul>
+<br>
+
+{% endif %}
