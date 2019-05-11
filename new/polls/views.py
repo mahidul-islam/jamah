@@ -5,7 +5,7 @@ from django.http import Http404
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.utils import timezone
-from .models import Question, Choice, Comment, Voter
+from .models import Question, Choice, Comment, Vote
 
 
 def index(request):
@@ -33,8 +33,8 @@ def vote(request, question_id):
     question = Question.objects.get(pk = question_id)
     try:
         # see if the user already voted for the question
-        voter = question.voter_set.get(voter = request.user)
-        # print(voter)
+        vote = question.vote_set.get(voter = request.user)
+        # print(vote)
     except:
         # now we know that the user didnot vote
         try:
@@ -46,13 +46,14 @@ def vote(request, question_id):
                 'error_message':'ERROR: you didnot select a choice',
                 'question':question
             }
+            return HttpResponse(template.render(context, request))
             template = loader.get_template('polls/detail.html')
             return HttpResponse(template.render(context, request))
         else:
             # voter did select
             choice.votes += 1
             choice.save()
-            Voter(question = question, voter = request.user, choice_no = choice.id).save()
+            Vote(question = question, voter = request.user, choice_no = choice.id).save()
             return HttpResponseRedirect(reverse('polls:result', args = (question.id,)))
     else:
         # the voter already voted
@@ -93,9 +94,9 @@ def save_choice(request, question_id):
 def change_vote(request, question_id):
     question = Question.objects.get(pk = question_id)
     print(question.question_text)
-    voter = question.voter_set.get(voter = request.user)
-    print(voter)
-    choice_no = voter.choice_no
+    vote = question.vote_set.get(voter = request.user)
+    print(vote)
+    choice_no = vote.choice_no
     choice = question.choice_set.get(pk = choice_no)
     choice.votes -= 1
     print(choice.votes)
@@ -104,7 +105,7 @@ def change_vote(request, question_id):
         'error_message':'Please Vote Again',
         'question':question
     }
-    voter.delete()
+    vote.delete()
     choice.save()
     return HttpResponse(template.render(context, request))
 

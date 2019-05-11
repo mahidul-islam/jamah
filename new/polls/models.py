@@ -32,7 +32,7 @@ class Choice(models.Model):
     def __str__(self):
         return ('Choice for question {}').format(self.question.id)
 
-class Voter(models.Model):
+class Vote(models.Model):
     uid = models.UUIDField(  default=uuid.uuid4, editable=False)
     question = models.ForeignKey(Question, on_delete = models.CASCADE)
     voter = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
