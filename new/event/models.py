@@ -18,7 +18,7 @@ class Event(models.Model):
     name = models.CharField(max_length = 200)
     date = models.DateTimeField(default = timezone.now)
     creator = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete = models.CASCADE, related_name = 'Boss')
-    member = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete = models.CASCADE, null = True, blank = True)
+    member = models.ManyToManyField(settings.AUTH_USER_MODEL, blank = True)
     account = models.OneToOneField(Account, on_delete = models.CASCADE)
 
     def __str__(self):
