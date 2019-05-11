@@ -9,15 +9,15 @@ from user.models import MyUser
 def index(request):
     template = loader.get_template('event/index.html')
     try:
-        events = Event.objects.filter(creator = request.user)
-        eventss = Event.objects.filter(creator = request.user)
+        eventbyme = Event.objects.filter(creator = request.user)
+        eventbyall = request.user.event_set.all()
     except:
         context = {'message': "Please Log in to use this feature"}
         return HttpResponse(template.render(context, request))
     else:
         context = {
-            'eventOfMine':events,
-            'eventOfOthers':eventss
+            'eventOfMine':eventbyme,
+            'eventbyall':eventbyall
         }
         return HttpResponse(template.render(context, request))
 
@@ -59,5 +59,5 @@ def remove_member(request, event_id, member_id):
     member = MyUser.objects.get(pk = member_id)
     event.members.remove(member)
     event.save()
-    print(event.members.all())
+    # print(event.members.all())
     return HttpResponseRedirect(reverse('event:detail', args = (event_id,)))
