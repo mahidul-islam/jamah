@@ -26,7 +26,10 @@ def detail(request, event_id):
     users = MyUser.objects.all()
     template = loader.get_template('event/detail.html')
     eventmembers = event.members.all()
+    polls = event.question_set.all()
+    print(polls)
     context = {
+        'polls': polls,
         'event': event,
         'users': users,
         'eventmembers': eventmembers

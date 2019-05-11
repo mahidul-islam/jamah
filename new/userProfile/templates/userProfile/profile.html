@@ -1,3 +1,24 @@
-{{user}}
+<h3><a href="{% url 'home' %}">Back to home</a></h3>
+
+<h2>{{user}}</h2>
 <br>
-{{error_message}}
+{% if error_message %}
+  {{error_message}}
+{% endif %}
+<h3>Event of Yours:</h3>
+<ul>
+  {% for event in events %}
+    <li>
+      <a href="{% url 'event:detail' event.id %}">{{event.name}}</a>
+    </li>
+  {% endfor %}
+</ul>
+<h3>Polls of Yours:</h3>
+<ul>
+  {% for poll in polls %}
+    <li>
+      <a href="{% url 'polls:detail' poll.id %}">{{poll.question_text}}</a> --
+      <a href="{% url 'polls:delete_question' poll.id %}"> Delete? </a>
+    </li>
+  {% endfor %}
+</ul>

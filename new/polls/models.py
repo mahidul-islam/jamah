@@ -2,7 +2,7 @@ from django.db import models
 from django.conf import settings
 from event.models import Event
 import uuid
-# from django.db.models.signals import post_save
+from django.db.models.signals import post_save
 
 
 class Question(models.Model):
@@ -11,9 +11,16 @@ class Question(models.Model):
     pub_date = models.DateTimeField('date published', blank=True, null=True)
     creator = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True)
     event = models.ForeignKey(Event, blank = True, null = True, on_delete = models.CASCADE)
+    # TODO: made a signal for is part of event from event
+    is_part_of_event = models.BooleanField(default = False)
+
+    def save(self, *args, **kwargs):
+        if self.event:
+            self.is_part_of_event = True
+        super(Question, self).save(*args, **kwargs)
 
     def __str__(self):
-        return ('Question no {}').format(self.id)
+        return self.question_text
 
 class Choice(models.Model):
     uid = models.UUIDField(  default=uuid.uuid4, editable=False)
@@ -42,6 +49,13 @@ class Comment(models.Model):
         return ('Comment of Question{}').format(self.question.id)
 
 
-# def save_commenter(sender, instance, **kwargs):
-#     pass
-# post_save.connect(save_commenter, sender=Comment)
+# def save_is_part_of_event_bool(sender, instance, **kwargs):
+#     # print(sender)
+#     if instance.event:
+#         print('got it ...................... got it')
+#         instance.is_part_of_event = True
+#         print(instance.question_text)
+#         print(instance.is_part_of_event)
+#     instance.is
+#
+# post_save.connect(save_is_part_of_event_bool, sender=Question)

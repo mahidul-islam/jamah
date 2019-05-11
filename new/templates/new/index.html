@@ -3,6 +3,7 @@
 <ul>
   {% if user.is_staff %}
     <li><a href="{% url 'profile:alluser' %}">All Users</a></li>
+    <li><a href="{% url 'admin:index' %}">Admin</a></li>
   {% endif %}
   <li><a href="{% url 'myuser:signup' %}">Sign Up</a></li>
   <li><a href="{% url 'login' %}">Log In</a></li>

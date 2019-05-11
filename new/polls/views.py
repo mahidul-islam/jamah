@@ -9,6 +9,7 @@ from .models import Question, Choice, Comment, Voter
 
 
 def index(request):
+    # TODO: exclude all question associated with events...
     question_list = Question.objects.all()
     template = loader.get_template('polls/index.html')
     context = {'question_list':question_list}

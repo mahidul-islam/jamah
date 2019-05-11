@@ -7,7 +7,9 @@
 
 <h3>Existing members:</h3>
 <ul>
-  <li>{{event.creator}} -- Creator</li>
+  <li>
+    <a href="{% url 'profile:user_profile' event.creator.id %}">{{event.creator}}</a> -- Creator
+  </li>
   {% for member in eventmembers %}
   <!-- because creator is added differentl -->
     {% if member != event.creator %}
@@ -21,8 +23,23 @@
   {% endfor %}
 </ul>
 
+<h3>Polls:</h3>
+<ul>
+  {% for poll in polls %}
+      <li>
+        <a href="{% url 'polls:detail' poll.id %}">{{poll.question_text}}</a>
+        {% if user.is_staff or user == event.creator or user == poll.creator %}
+        <a href="#">remove?</a>
+        {% endif %}
+      </li>
+  {% endfor %}
+</ul>
+
 
 {% if user.is_staff or user == event.creator %}
+  <!-- TODO: link it to the polls create questoin -->
+  <h3><a href="#">Launch a poll for this event</a></h3>
+
   <h3>Add member:</h3>
 
   <form action="{% url 'event:save_member' event.id %}" method="post">
