@@ -22,9 +22,9 @@
   {% endfor %}
 </ul>
 
-<h3>Add member:</h3>
 
 {% if user.is_staff or user == event.creator %}
+<h3>Add member:</h3>
   <form action="{% url 'event:save_member' event.id %}" method="post">
     {% csrf_token %}
     <ol>

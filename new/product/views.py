@@ -4,8 +4,8 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 
 
-def detailProduct(request, pk):
-    pass
+def productDetail(request, pk):
+    return HttpResponse('This is product detail page')
 
 def allProduct(request):
     return HttpResponse('This is allProduct page')

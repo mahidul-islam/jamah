@@ -5,5 +5,6 @@ app_name = 'product'
 
 urlpatterns = [
     path('', views.allProduct, name='index'),
+    path('', views.productDetail, name='productDetail'),
     path('<int:lowrange>/<int:highrange>', views.productInRange, name='productInRange'),
 ]
