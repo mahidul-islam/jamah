@@ -5,7 +5,6 @@
 
 <h3>This is Event : "{{event.name}}", Which is created by <strong>"{{event.creator.username}}"</strong></h3>
 
-{{event.creator}}
 <h3>Existing members:</h3>
 <ul>
   <li>{{event.creator}} -- Creator</li>
@@ -13,7 +12,7 @@
   <!-- because creator is added differentl -->
     {% if member != event.creator %}
       <li>
-        <a href="#<!-- TODO: link profile here -->">{{member.username}}</a>
+        <a href="{% url 'profile:user_profile' member.id %}">{{member.username}}</a>
         {% if user.is_staff or user == event.creator %}
         <a href="{% url 'event:remove_member' event.id member.id %}">remove?</a>
         {% endif %}
@@ -24,7 +23,8 @@
 
 
 {% if user.is_staff or user == event.creator %}
-<h3>Add member:</h3>
+  <h3>Add member:</h3>
+
   <form action="{% url 'event:save_member' event.id %}" method="post">
     {% csrf_token %}
     <ol>
@@ -33,7 +33,7 @@
         {% if user != event.creator %}
           <li>
             <input type="checkbox" name="member" value="{{ user.id }}">
-            <a href="#<!-- TODO: link profile here -->">{{ user.username }}</a>
+            <a href="{% url 'profile:user_profile' user.id %}">{{ user.username }}</a>
           </li>
         {% endif %}
       {% endfor %}

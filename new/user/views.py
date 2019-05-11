@@ -4,12 +4,13 @@ from .forms import MyUserCreationForm
 from django.template import loader
 from django.shortcuts import render, redirect
 from django.urls import reverse
+from .models import MyUser
 
 
 def SignUp(request):
     if request.method == 'POST':
         form = MyUserCreationForm(request.POST)
-        print(form.is_valid())
+        # print(form.is_valid())
         if form.is_valid():
             form.save()
             username = form.cleaned_data.get('username')
@@ -17,14 +18,12 @@ def SignUp(request):
             user = authenticate(username=username, password=raw_password)
             login(request, user)
             return HttpResponseRedirect(reverse('home'))
-
     else:
-        print('method is not Post')
+        # print('method is not Post')
         form = MyUserCreationForm()
 
     template = loader.get_template('registration/signup.html')
     return HttpResponse(template.render({'form':form}, request))
-
 
 
 # made by me

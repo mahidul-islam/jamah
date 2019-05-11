@@ -1,7 +1,10 @@
 <h1>Various Things</h1>
 
 <ul>
-  <li><a href="{% url 'signup' %}">Sign Up</a></li>
+  {% if user.is_staff %}
+    <li><a href="{% url 'profile:alluser' %}">All Users</a></li>
+  {% endif %}
+  <li><a href="{% url 'myuser:signup' %}">Sign Up</a></li>
   <li><a href="{% url 'login' %}">Log In</a></li>
   <li><a href="{% url 'logout' %}">Log Out</a></li>
   <li><a href="{% url 'polls:index' %}">Polls</a></li>

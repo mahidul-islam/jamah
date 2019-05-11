@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'polls',
     'comment',
     'event',
-    'user'
+    'user',
+    'userProfile'
 ]
 
 MIDDLEWARE = [
