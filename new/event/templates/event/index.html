@@ -26,7 +26,7 @@
 <h3>Below are all the event YOU are a part of:</h3>
 <ul>
   {% for event in eventOfOthers %}
-  <li><a href="{% url 'event:detail' event.id %}">{{event.name}}</a></li>
+  <li><a href="{% url 'event:detail' event.id %}">{{event.name}}</a> Created by -- {{ event.creator.username }}</li>
   {% endfor %}
   <!-- TODO: Access all the list  -->
 </ul>
