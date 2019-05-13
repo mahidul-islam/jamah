@@ -1,0 +1,13 @@
+<h3><a href="{% url 'home' %}">Back to Home</a></h3>
+
+<h4><a href="{% url 'blog:create' %}">Add Blog</a></h4>
+
+<h3>This is all the blogs created</h3>
+
+{% for blog in blogs %}
+
+<ul>
+  <li><a href="{% url 'blog:detail' blog.id %}">{{blog.heading_text}}</a></li>
+</ul>
+
+{% endfor %}

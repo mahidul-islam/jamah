@@ -10,10 +10,13 @@ def profile(request, user_id):
         user = MyUser.objects.get(pk = user_id)
         events = user.event_set.all()
         polls = user.question_set.all()
+        email_text = "Is it working?"
+        subject = 'how to send email'
+        # user.email_user(subject, email_text)
         context = {
             'polls': polls,
             'events': events,
-            'user': user,
+            'user': user
         }
     except:
         user = False
@@ -30,3 +33,7 @@ def profile(request, user_id):
 def alluser(request):
     users = MyUser.objects.all()
     return HttpResponse('This is all user')
+
+def send_mail(request, user_id):
+
+    return HttpResponseRedirect(reverse('profile:user_profile', args = (user_id,)))

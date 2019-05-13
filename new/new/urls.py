@@ -11,5 +11,5 @@ urlpatterns = [
     path('profile/', include('userProfile.urls')),
     path('user/', include('django.contrib.auth.urls')),
     path('event/', include('event.urls')),
-    # path('accountant/', include('accountant.urls'))
+    path('blog/', include('blog.urls'))
 ]

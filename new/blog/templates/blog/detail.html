@@ -1,0 +1,6 @@
+<h3><a href="{% url 'home' %}">Back to Home</a></h3>
+<h3><a href="{% url 'blog:allblog' %}">Back to Blogs</a></h3>
+
+<h2>{{blog.heading_text}}, by -- {{blog.author}}</h2> 
+
+<p>{{blog.body_text}}</p>
