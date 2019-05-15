@@ -7,9 +7,17 @@
 <br>
 <ul class="list-group">
   {% for q in question_list %}
-  <li class="list-group-item"><a href="{% url 'polls:detail' q.id %}">{{q.question_text}}</a>
-                {% if user.is_staff or user == q.creator %}
-                <a href="{% url 'polls:delete_question' q.id %}">delete?</a> {% endif %}</li>
+    <li class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+      <a href="{% url 'polls:detail' q.id %}">
+        {{q.question_text}}
+      </a>
+      {% if user.is_staff or user == q.creator %}
+        <a class="btn btn-danger" href="{% url 'polls:delete_question' q.id %}">
+          delete?
+        </a>
+      {% endif %}
+      <span class="badge badge-primary badge-pill">{{q.vote_set.count}}</span>
+    </li>
   {% endfor %}
 </ul>
 <br>

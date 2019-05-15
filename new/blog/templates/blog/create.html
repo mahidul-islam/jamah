@@ -3,17 +3,17 @@
 
 {% block content %}
 
-
-<h3><a href="{% url 'home' %}">Back to Home</a></h3>
-<h3><a href="{% url 'blog:allblog' %}">Back to Blogs</a></h3>
-
-<form action="{% url 'blog:create' %}" method="post">
-  {% csrf_token %}
-  <input type="text" name="heading"> Heading  <br>
-  <textarea name="body" rows="8" cols="80"></textarea> Body <br>
-  <input type="checkbox" name="is_finished" value="True"> Finished? <br>
-  <input type="checkbox" name="is_published" value="True"> Publish? <br>
-  <input type="submit" value="Add!"><br>
-</form>
+<div class="container">
+  <br><br>
+  <form action="{% url 'blog:create' %}" method="post">
+    {% csrf_token %}
+    <input type="text" name="heading"> Heading  <br>
+    <textarea name="body" rows="8" cols="80"></textarea> Body <br>
+    <input type="checkbox" name="is_finished" value="True"> Finished? <br>
+    <input type="checkbox" name="is_published" value="True"> Publish? <br>
+    <input class="btn btn-primary" type="submit" value="Add!"><br>
+  </form>
+  <br><br>
+</div>
 
 {% endblock %}
