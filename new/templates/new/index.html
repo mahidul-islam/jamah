@@ -1,21 +1,27 @@
-<h1>Various Things</h1>
+{% extends 'new/base.html' %}
+{% load static %}
 
-<ul>
-  {% if user.is_staff %}
-    <li><a href="{% url 'profile:alluser' %}">All Users</a></li>
-    <li><a href="{% url 'admin:index' %}">Admin</a></li>
-  {% endif %}
-  <li><a href="{% url 'myuser:signup' %}">Sign Up</a></li>
-  <li><a href="{% url 'login' %}">Log In</a></li>
-  <li><a href="{% url 'logout' %}">Log Out</a></li>
-  <li><a href="{% url 'blog:allblog' %}">Blog</a></li>
-  <li><a href="{% url 'polls:index' %}">Polls</a></li>
-  <li><a href="{% url 'event:index' %}">Events</a></li>
-  <li><a href="{% url 'product:index' %}">Products</a></li>
-</ul>
-<br>
-{% if user.is_authenticated %}
-  <p>Hi {{ user.username }}</p>
-{% else %}
-  <p>You are not logged in</p>
-{% endif %}
+{% block navbar %}
+{% include 'new/navbar.html' %}
+{% endblock navbar %}
+
+{% block content %}
+<div class="jumbotron">
+  <div class="row">
+    <div class="col-4">
+      <div class="container">
+        <img src="{% static 'image.png' %}" class="img-fluid" alt="Logo of the site">
+      </div>
+    </div>
+    <div class="col-8">
+      <div class="container">
+        <h1 class='display-1' ><span class="text-danger">E</span>vent
+          <span class="text-danger">M</span>anage<span class="text-danger">M</span>ent
+        </h1>
+        <p class="lead text-right font-italic">  Make your Event Seamless...</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

@@ -2,6 +2,12 @@
 
 <h4><a href="{% url 'blog:create' %}">Add Blog</a></h4>
 
+{% if messages %}
+  {% for message in messages %}
+    <h3>{{message}}</h3>
+  {% endfor %}
+{% endif %}
+
 <h3>This is all the blogs created</h3>
 
 {% for blog in blogs %}
