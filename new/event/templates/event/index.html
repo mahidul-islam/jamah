@@ -1,8 +1,12 @@
+{% extends 'new/base.html' %}
+{% load static %}
+
+{% block content %}
+
+
 {% if message %}
 <h3>{{message}}</h3>
 {% endif %}
-<a href="{% url 'home' %}">Back to Home</a>
-<br>
 <br>
 
 {% if user.is_authenticated %}
@@ -16,20 +20,22 @@
 
 <br><br>
 <h3>Below are all the event YOU created:</h3>
-<ul>
+<ul class="list-group">
   {% for event in eventOfMine %}
-  <li><a href="{% url 'event:detail' event.id %}">{{event.name}}</a></li>
+  <li class="list-group-item"><a href="{% url 'event:detail' event.id %}">{{event.name}}</a></li>
   {% endfor %}
 </ul>
 <br>
 <br>
 <h3>Below are all the event YOU are a part of:</h3>
-<ul>
+<ul class="list-group">
   {% for event in eventbyall %}
-  <li><a href="{% url 'event:detail' event.id %}">{{event.name}}</a> Created by -- {{ event.creator.username }}</li>
+  <li class="list-group-item"><a href="{% url 'event:detail' event.id %}">{{event.name}}</a> Created by -- {{ event.creator.username }}</li>
   {% endfor %}
   <!-- TODO: Access all the list  -->
 </ul>
-<br>
+<br><br>
 
 {% endif %}
+
+{% endblock %}

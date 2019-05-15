@@ -1,3 +1,9 @@
+{% extends 'new/base.html' %}
+{% load static %}
+
+{% block content %}
+
+
 <h3><a href="{% url 'home' %}">Back to home</a></h3>
 
 <h2>{{user}}</h2>
@@ -29,3 +35,4 @@
   <input type="text" name="message" value="Mail Text">
   <input type="submit" value="Send!">
 </form> -->
+{% endblock %}

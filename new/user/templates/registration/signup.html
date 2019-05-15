@@ -1,3 +1,9 @@
+{% extends 'new/base.html' %}
+{% load static %}
+
+{% block content %}
+
+
 <h2>Sign Up</h2>
 
 <h4><a href="{% url 'home' %}"> back </a></h4>
@@ -7,3 +13,5 @@
   {{ form.as_p }}
   <input type="submit" value="Sign Up">
 </form>
+
+{% endblock %}

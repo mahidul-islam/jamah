@@ -1,19 +1,22 @@
-<a href="{% url 'home' %}">Back to Home</a><br>
-<a href="{% url 'event:index' %}">Back to Events</a>
+{% extends 'new/base.html' %}
+{% load static %}
+
+{% block content %}
+
 <br>
 <br>
 
 <h3>This is Event : "{{event.name}}", Which is created by <strong>"{{event.creator.username}}"</strong></h3>
 
 <h3>Existing members:</h3>
-<ul>
-  <li>
+<ul class="list-group">
+  <li class="list-group-item">
     <a href="{% url 'profile:user_profile' event.creator.id %}">{{event.creator}}</a> -- Creator
   </li>
   {% for member in eventmembers %}
   <!-- because creator is added differentl -->
     {% if member != event.creator %}
-      <li>
+      <li class="list-group-item">
         <a href="{% url 'profile:user_profile' member.id %}">{{member.username}}</a>
         {% if user.is_staff or user == event.creator %}
         <a href="{% url 'event:remove_member' event.id member.id %}">remove?</a>
@@ -24,9 +27,9 @@
 </ul>
 
 <h3>Polls:</h3>
-<ul>
+<ul class="list-group">
   {% for poll in polls %}
-      <li>
+      <li class="list-group-item">
         <a href="{% url 'polls:detail' poll.id %}">{{poll.question_text}}</a>
         {% if user.is_staff or user == event.creator or user == poll.creator %}
         <a href="#">remove?</a>
@@ -44,11 +47,11 @@
 
   <form action="{% url 'event:save_member' event.id %}" method="post">
     {% csrf_token %}
-    <ol>
+    <ol class="list-group">
       {% for user in users %}
       <!--  creator is already in the member list -->
         {% if user != event.creator %}
-          <li>
+          <li class="list-group-item">
             <input type="checkbox" name="member" value="{{ user.id }}">
             <a href="{% url 'profile:user_profile' user.id %}">{{ user.username }}</a>
           </li>
@@ -58,4 +61,7 @@
     <br>
     <input type="submit" value="Add Member">
   </form>
+  <br><br>
 {% endif %}
+
+{% endblock %}

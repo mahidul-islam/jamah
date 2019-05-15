@@ -1,6 +1,15 @@
-<h3><a href="{% url 'home' %}">Back to Home</a></h3>
-<h3><a href="{% url 'blog:allblog' %}">Back to Blogs</a></h3>
+{% extends 'new/base.html' %}
+{% load static %}
 
-<h2>{{blog.heading_text}}, by -- {{blog.author}}</h2> 
+{% block content %}
+<br><br>
+<div class="container">
 
-<p>{{blog.body_text}}</p>
+  <h2>{{blog.heading_text}}, by -- {{blog.author}}</h2>
+  <p>{{blog.timestamp|timesince}} ago...</p>
+  <hr>
+  <p>{{blog.body_text}}</p>
+
+</div>
+<br><br>
+{% endblock %}

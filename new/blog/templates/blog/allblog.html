@@ -1,19 +1,24 @@
-<h3><a href="{% url 'home' %}">Back to Home</a></h3>
+{% extends 'new/base.html' %}
+{% load static %}
 
-<h4><a href="{% url 'blog:create' %}">Add Blog</a></h4>
+{% block content %}
 
-{% if messages %}
-  {% for message in messages %}
-    <h3>{{message}}</h3>
-  {% endfor %}
-{% endif %}
+  {% if messages %}
+    {% for message in messages %}
+      <h3>{{message}}</h3>
+    {% endfor %}
+  {% endif %}
+  <br><br>
+  <h3>This is all the blogs created</h3>
 
-<h3>This is all the blogs created</h3>
+  <ul class="list-group">
+    {% for blog in blogs %}
+      {% if blog.heading_text %}
+        <li class="list-group-item"><a href="{% url 'blog:detail' blog.id %}">{{blog.heading_text}}</a></li>
+      {% endif %}
+    {% endfor %}
+  </ul>
+  
+  <br><br>
 
-{% for blog in blogs %}
-
-<ul>
-  <li><a href="{% url 'blog:detail' blog.id %}">{{blog.heading_text}}</a></li>
-</ul>
-
-{% endfor %}
+{% endblock %}

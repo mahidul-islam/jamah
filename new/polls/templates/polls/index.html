@@ -1,15 +1,23 @@
+{% extends 'new/base.html' %}
+{% load static %}
+
+{% block content %}
+<br>
 <h3>Questions:</h3>
-<h4><a href="{% url 'home' %}">Back To Home</a></h4>
-<ul>
+<br>
+<ul class="list-group">
   {% for q in question_list %}
-  <li><a href="{% url 'polls:detail' q.id %}">{{q.question_text}}</a>
+  <li class="list-group-item"><a href="{% url 'polls:detail' q.id %}">{{q.question_text}}</a>
                 {% if user.is_staff or user == q.creator %}
                 <a href="{% url 'polls:delete_question' q.id %}">delete?</a> {% endif %}</li>
   {% endfor %}
 </ul>
+<br>
 
 <form action="{% url 'polls:save_question' %}" method="post">
   {% csrf_token %}
   <input type="text" name="question">
   <input type="submit" value="Add Question">
 </form>
+<br><br>
+{% endblock %}

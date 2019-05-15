@@ -1,39 +1,22 @@
-<!DOCTYPE html>
-<html lang="en" dir="ltr">
-  <head>
-    <meta charset="utf-8">
-    <title></title>
-    <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css"
-      integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
-  </head>
-  <body>
-    <div class="container">
-      {% block navbar %}
-      {% endblock navbar %}
-    </div>
+{% extends 'new/abstractbase.html' %}
 
-    <div class="container">
-      {% block content %}
-      {% endblock %}
+{% block base %}
 
-    </div>
+<div class="container">
+  {% block navbar %}
+    {% include 'new/navbar.html' %}
+  {% endblock navbar %}
+</div>
 
-    <div class="container">
-      {% block footer %}
-        {% include 'new/footer.html' %}
-      {% endblock footer %}
-    </div>
+<div class="container">
+  {% block content %}
+  {% endblock %}
+</div>
 
+<div class="container">
+  {% block footer %}
+    {% include 'new/footer.html' %}
+  {% endblock footer %}
+</div>
 
-
-  <!-- jQuery library -->
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
-  <!-- Popper JS -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-  <!-- Latest compiled JavaScript -->
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-
-  </body>
-</html>
+{% endblock base %}

@@ -1,3 +1,9 @@
+{% extends 'new/base.html' %}
+{% load static %}
+
+{% block content %}
+
+
 <h3><a href="{% url 'home' %}">Back to Home</a></h3>
 <h3><a href="{% url 'blog:allblog' %}">Back to Blogs</a></h3>
 
@@ -9,3 +15,5 @@
   <input type="checkbox" name="is_published" value="True"> Publish? <br>
   <input type="submit" value="Add!"><br>
 </form>
+
+{% endblock %}
