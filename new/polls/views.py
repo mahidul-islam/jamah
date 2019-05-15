@@ -46,7 +46,6 @@ def vote(request, question_id):
                 'error_message':'ERROR: you didnot select a choice',
                 'question':question
             }
-            return HttpResponse(template.render(context, request))
             template = loader.get_template('polls/detail.html')
             return HttpResponse(template.render(context, request))
         else:
