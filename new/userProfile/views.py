@@ -3,6 +3,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from user.models import MyUser
 from django.template import loader
 from polls.models import Question
+from django.contrib import messages
 
 
 def profile(request, user_id):
@@ -10,20 +11,16 @@ def profile(request, user_id):
         user = MyUser.objects.get(pk = user_id)
         events = user.event_set.all()
         polls = user.question_set.all()
-        email_text = "Is it working?"
-        subject = 'how to send email'
-        # user.email_user(subject, email_text)
         context = {
             'polls': polls,
             'events': events,
             'user': user
         }
     except:
-        user = False
         context = {
-            'error_message': 'user not found',
-            'user': user
+            'user' : False
         }
+        messages.alert(request, 'User not Found')
         template = loader.get_template('userProfile/profile.html')
         return HttpResponse(template.render(context, request))
     else:
@@ -35,5 +32,4 @@ def alluser(request):
     return HttpResponse('This is all user')
 
 def send_mail(request, user_id):
-
     return HttpResponseRedirect(reverse('profile:user_profile', args = (user_id,)))

@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'user',
     'userProfile',
     'blog',
+    'crispy_forms',
 ]
 
 MIDDLEWARE = [
@@ -146,3 +147,5 @@ LOGOUT_REDIRECT_URL = 'home'
 AUTH_USER_MODEL = 'user.MyUser'
 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'

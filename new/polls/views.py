@@ -6,6 +6,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.utils import timezone
 from .models import Question, Choice, Comment, Vote
+from django.contrib import messages
 
 
 def index(request):
@@ -43,9 +44,9 @@ def vote(request, question_id):
         except:
             # voter didnot selected a choice
             context = {
-                'error_message':'ERROR: you didnot select a choice',
                 'question':question
             }
+            messages.warning(request, 'You didnot select a CHOICE')
             template = loader.get_template('polls/detail.html')
             return HttpResponse(template.render(context, request))
         else:
@@ -57,10 +58,10 @@ def vote(request, question_id):
     else:
         # the voter already voted
         context = {
-            'error_message':'ERROR: you already voted',
             'question':question,
             'change':'change'
         }
+        messages.warning(request, 'You already Voted!!!')
         template = loader.get_template('polls/detail.html')
         return HttpResponse(template.render(context, request))
 
@@ -92,20 +93,17 @@ def save_choice(request, question_id):
 
 def change_vote(request, question_id):
     question = Question.objects.get(pk = question_id)
-    print(question.question_text)
     vote = question.vote_set.get(voter = request.user)
-    print(vote)
     choice_no = vote.choice_no
     choice = question.choice_set.get(pk = choice_no)
     choice.votes -= 1
-    print(choice.votes)
     template = loader.get_template('polls/detail.html')
     context ={
-        'error_message':'Please Vote Again',
         'question':question
     }
     vote.delete()
     choice.save()
+    messages.info(request, 'Please VOTE again...')
     return HttpResponse(template.render(context, request))
 
 def delete_question(request, question_id):

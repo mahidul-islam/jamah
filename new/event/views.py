@@ -4,6 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from .models import Event, Account
 from django.urls import reverse
 from user.models import MyUser
+from django.contrib import messages
 
 
 def index(request):
@@ -12,7 +13,8 @@ def index(request):
         eventbyme = Event.objects.filter(creator = request.user)
         eventbyall = request.user.event_set.all()
     except:
-        context = {'message': "Please Log in to use this feature"}
+        context = {}
+        messages.success(request, 'Please Log in to use this feature')
         return HttpResponse(template.render(context, request))
     else:
         context = {

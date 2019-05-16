@@ -2,12 +2,6 @@
 {% load static %}
 
 {% block content %}
-
-  {% if messages %}
-    {% for message in messages %}
-      <h3>{{message}}</h3>
-    {% endfor %}
-  {% endif %}
   <br>
   <a href="{% url 'blog:create' %}" class="btn btn-secondary">Create Your own BLOG</a>
   <br><br>

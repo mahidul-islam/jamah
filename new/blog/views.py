@@ -4,6 +4,7 @@ from django.template import loader
 from django.urls import reverse
 from .models import Blog
 from django.contrib import messages
+from .forms import CreateBlogForm
 
 
 def allblog(request):
@@ -16,28 +17,19 @@ def allblog(request):
 
 def create(request):
     if request.POST:
-        heading = request.POST['heading']
-        body = request.POST['body']
-        is_finished = False
-        published = False
-        if len(request.POST.getlist('is_finished')):
-            finished = request.POST.getlist('is_finished')
-            is_finished = finished[0]
-        if len(request.POST.getlist('published')):
-            pub = request.POST.getlist('published')
-            published = pub[0]
-        blog = Blog(
-            heading_text=heading,
-            body_text=body,
-            is_finished=is_finished,
-            is_published=published,
-            author = request.user
-            ).save()
-        messages.success(request, "is double message working")
-        messages.add_message(request, messages.SUCCESS, 'Added new BLOG.')
-        return HttpResponseRedirect(reverse('blog:allblog'))
+        form = CreateBlogForm(request.POST)
+        if form.is_valid():
+            blog = form.save(commit = False)
+            blog.author = request.user
+            blog.save()
+            messages.success(request, "is double message working")
+            messages.add_message(request, messages.SUCCESS, 'Added new BLOG.')
+            return HttpResponseRedirect(reverse('blog:allblog'))
     template = loader.get_template('blog/create.html')
-    context = {}
+    form = CreateBlogForm()
+    context = {
+        'form':form
+    }
     return HttpResponse(template.render(context, request))
 
 def detail(request, blog_id):
