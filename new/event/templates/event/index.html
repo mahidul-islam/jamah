@@ -17,25 +17,18 @@
   <input type="text" name="event">
   <button type="submit">Create</button>
 </form>
-
-<br><br>
-<h3>Below are all the event YOU created:</h3>
-<ul class="list-group">
-  {% for event in eventOfMine %}
-  <li class="list-group-item"><a href="{% url 'event:detail' event.id %}">{{event.name}}</a></li>
-  {% endfor %}
-</ul>
 <br>
 <br>
-<h3>Below are all the event YOU are a part of:</h3>
-<ul class="list-group">
-  {% for event in eventbyall %}
-  <li class="list-group-item"><a href="{% url 'event:detail' event.id %}">{{event.name}}</a> Created by -- {{ event.creator.username }}</li>
-  {% endfor %}
-  <!-- TODO: Access all the list  -->
-</ul>
-<br><br>
-
+<h3>Your Event:</h3>
+<br>
+  {% include 'event/snippet/allevent.html' with events=eventOfMine %}
+<br>
+<br>
+<h3>Your's Event created by others:</h3>
+<br>
+  {% include 'event/snippet/allevent.html' with events=eventbyall %}
+<br>
+<br>
 {% endif %}
 
 {% endblock %}

@@ -1,0 +1,14 @@
+{% if events.count %}
+  <ul class="list-group">
+    {% for event in events %}
+      <li class="list-group-item">
+        <a href="{% url 'event:detail' event.id %}">
+          {{event.name}}
+        </a>
+        Created by -- {{ event.creator.username }}
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <h3>There seem to be no Event!!!</h3>
+{% endif %}

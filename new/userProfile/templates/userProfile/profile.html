@@ -10,37 +10,12 @@
   </h2>
   <hr>
   <br>
-
-  {% if events.count %}
-    <h3>Event of Yours:</h3>
-    <ul class="list-group">
-      {% for event in events %}
-        <li class="list-group-item">
-          <a href="{% url 'event:detail' event.id %}">{{event.name}}</a>
-        </li>
-      {% endfor %}
-    </ul>
-  {% endif %}
-
+  <h3>All Event of Yours:</h3>
   <br>
-  {% if polls.count %}
-  <h3>Polls of Yours:</h3>
-  <ul>
-    {% for poll in polls %}
-      <li>
-        <a href="{% url 'polls:detail' poll.id %}">{{poll.question_text}}</a> --
-        <a href="{% url 'polls:delete_question' poll.id %}"> Delete? </a>
-      </li>
-    {% endfor %}
-  </ul>
-  {% endif %}
+  {% include 'event/snippet/allevent.html' %}
+
+  {% include 'polls/snippet/allpolls.html' %}
   <br>
 </div>
-<!-- <h3>Send Mail</h3>
-<form action="#" method="post">
-  {% csrf_token %}
-  <input type="text" name="subject" value="Subject">
-  <input type="text" name="message" value="Mail Text">
-  <input type="submit" value="Send!">
-</form> -->
+
 {% endblock %}

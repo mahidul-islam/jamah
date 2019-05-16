@@ -11,9 +11,9 @@ from django.contrib import messages
 
 def index(request):
     # TODO: exclude all question associated with events...
-    question_list = Question.objects.all()
+    polls = Question.objects.all()
     template = loader.get_template('polls/index.html')
-    context = {'question_list':question_list}
+    context = {'polls':polls}
     return HttpResponse(template.render(context, request))
 
 def latest(request):
