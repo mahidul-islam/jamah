@@ -20,7 +20,7 @@ def profile(request, user_id):
         context = {
             'user' : False
         }
-        messages.alert(request, 'User not Found')
+        messages.warning(request, 'User not Found')
         template = loader.get_template('userProfile/profile.html')
         return HttpResponse(template.render(context, request))
     else:
