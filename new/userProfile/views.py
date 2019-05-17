@@ -4,8 +4,10 @@ from user.models import MyUser
 from django.template import loader
 from polls.models import Question
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 
 
+@login_required
 def profile(request, user_id):
     try:
         user = MyUser.objects.get(pk = user_id)
@@ -26,6 +28,7 @@ def profile(request, user_id):
     else:
         template = loader.get_template('userProfile/profile.html')
         return HttpResponse(template.render(context, request))
+
 
 def alluser(request):
     users = MyUser.objects.all()

@@ -10,6 +10,7 @@ six = "*"
 psycopg2 = "*"
 easy-thumbnails = "*"
 django-crispy-forms = "*"
+rules = "*"
 
 [requires]
 python_version = "3.6"

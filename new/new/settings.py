@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'userProfile',
     'blog',
     'crispy_forms',
+    'rules',
 ]
 
 MIDDLEWARE = [
@@ -149,3 +150,10 @@ AUTH_USER_MODEL = 'user.MyUser'
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+# REDIRECT_FIELD_NAME = 'home'
+
+AUTHENTICATION_BACKENDS = (
+    'rules.permissions.ObjectPermissionBackend',
+    'django.contrib.auth.backends.ModelBackend',
+)

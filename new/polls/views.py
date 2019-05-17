@@ -7,7 +7,14 @@ from django.urls import reverse
 from django.utils import timezone
 from .models import Question, Choice, Comment, Vote
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required, user_passes_test
+from rules.contrib.views import permission_required
+import rules
 
+
+@rules.predicate
+def is_poll_creator(user, poll):
+    return poll.creator == user
 
 def index(request):
     # TODO: exclude all question associated with events...
@@ -106,9 +113,15 @@ def change_vote(request, question_id):
     messages.info(request, 'Please VOTE again...')
     return HttpResponse(template.render(context, request))
 
+rules.add_perm('polls.can_delete_poll', is_poll_creator)
+
 def delete_question(request, question_id):
     question = Question.objects.get(pk = question_id)
-    question.delete()
-    template = loader.get_template('polls/index.html')
-    context = {}
-    return HttpResponseRedirect(reverse('polls:index'))
+    if request.user.has_perm('polls.can_delete_poll', question):
+        question.delete()
+        template = loader.get_template('polls/index.html')
+        context = {}
+        return HttpResponseRedirect(reverse('polls:index'))
+    else:
+        messages.warning(request, 'You do not have required permission')
+        return HttpResponseRedirect(reverse('polls:index'))
