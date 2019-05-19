@@ -1,8 +1,4 @@
-<br>
 {% if polls.count %}
-<br>
-<h3>Polls:</h3>
-<br>
   <ul class="list-group">
     {% for poll in polls %}
       <li class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
@@ -22,6 +18,5 @@
     {% endfor %}
   </ul>
 {% else %}
-  <h3>YOU are not Part of ANY poll....</h3>
+  <h3 class="lead">There seem to be no polls....</h3>
 {% endif %}
-<br>

@@ -1,61 +1,48 @@
 {% extends 'new/base.html' %}
 {% load static %}
-
+{% load crispy_forms_tags %}
 {% block content %}
 
 <br>
+<h3 class="text-center">Event Details</h3>
+<hr>
 <br>
+<h3>Event:"<mark>{{event.name}}</mark>"
+  <small>
+    Created by --
+    <a href="{% url 'profile:user_profile' event.creator.id %}">
+      "{{event.creator.username|upper}}"
+    </a>
+  </small>
+</h3>
+<br>
+<h3 class="lead">Existing members:</h3>
+{% include 'event/snippet/alleventmember.html' with event=event %}
+<br><br>
+<mark>Launch a poll for this event</mark>
+<form action="{% url 'event:create_event_poll' event.id %}" method="post">
+  {% csrf_token %}
+  {{pollForm.question_text|as_crispy_field}}
+  <input class="btn btn-primary" type="submit" name="" value=" Create Poll !!! ">
+</form>
+<br>
+<br>
+<h3 class="lead" >Polls:</h3>
 
-<h3>This is Event : "{{event.name}}", Which is created by <strong>"{{event.creator.username}}"</strong></h3>
-
-<h3>Existing members:</h3>
-<ul class="list-group">
-  <li class="list-group-item">
-    <a href="{% url 'profile:user_profile' event.creator.id %}">{{event.creator}}</a> -- Creator
-  </li>
-  {% for member in eventmembers %}
-  <!-- because creator is added differentl -->
-    {% if member != event.creator %}
-      <li class="list-group-item">
-        <a href="{% url 'profile:user_profile' member.id %}">{{member.username}}</a>
-        {% if user.is_staff or user == event.creator %}
-        <a href="{% url 'event:remove_member' event.id member.id %}">remove?</a>
-        {% endif %}
-      </li>
-    {% endif %}
-  {% endfor %}
-</ul>
-
-<h3>Polls:</h3>
-<ul class="list-group">
-  {% for poll in polls %}
-      <li class="list-group-item">
-        <a href="{% url 'polls:detail' poll.id %}">{{poll.question_text}}</a>
-        {% if user.is_staff or user == event.creator or user == poll.creator %}
-        <a href="#">remove?</a>
-        {% endif %}
-      </li>
-  {% endfor %}
-</ul>
-
+{% include 'polls/snippet/allpolls.html' with polls=polls %}
 
 {% if user.is_staff or user == event.creator %}
   <!-- TODO: link it to the polls create questoin -->
-  <h3><a href="#">Launch a poll for this event</a></h3>
-
-  <h3>Add member:</h3>
-
+  <br><br>
+  <h3 class="lead">Add member:</h3>
   <form action="{% url 'event:save_member' event.id %}" method="post">
     {% csrf_token %}
     <ol class="list-group">
       {% for user in users %}
-      <!--  creator is already in the member list -->
-        {% if user != event.creator %}
-          <li class="list-group-item">
-            <input type="checkbox" name="member" value="{{ user.id }}">
-            <a href="{% url 'profile:user_profile' user.id %}">{{ user.username }}</a>
-          </li>
-        {% endif %}
+        <li class="list-group-item">
+          <input type="checkbox" name="member" value="{{ user.id }}">
+          <a href="{% url 'profile:user_profile' user.id %}">{{ user.username }}</a>
+        </li>
       {% endfor %}
     </ol>
     <br>

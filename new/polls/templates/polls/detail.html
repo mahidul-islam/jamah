@@ -5,9 +5,16 @@
 
 <div class="container">
   <br>
-  <h3 class="text-center">Question Details:</h3>
+  <h3 class="text-center">Polls Details:</h3>
   <hr>
-  <h3>Q:"{{question.question_text}}" <small>Asked by -- {{question.creator.username|upper}}</small> </h3>
+  <h3>Q:"<mark>{{question.question_text}}</mark>"
+    <small>
+      Asked by --
+      <a href="{% url 'profile:user_profile' question.creator.id %}">
+        {{question.creator.username|upper}}
+      </a>
+    </small>
+  </h3>
   <p>{{question.pub_date|timesince}} ago...</p>
   <hr>
 
@@ -34,7 +41,10 @@
     <input class="btn btn-primary" type="submit" value=" VOTE !!! ">
   </form>
   <br><br>
-
+  <h3>To view current state for Poll ->
+    <a class="btn btn-info" href="{% url 'polls:result' question.id %}">Click HERE!!!</a>
+  </h3>
+  <br>
   {% if user.is_staff or user == question.creator %}
   <form action="{% url 'polls:save_choice' question.id %}" method="post">
     {% csrf_token %}
