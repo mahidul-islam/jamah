@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.template import loader
 from django.http import HttpResponse, HttpResponseRedirect
-from .models import Event, Account
+from .models import Event, Account, EventMember
 from django.urls import reverse
 from user.models import MyUser
 from django.contrib import messages
@@ -51,6 +51,8 @@ def create(request):
     event.save()
     event.members.add(request.user)
     event.save()
+    eventMember = EventMember(user=request.user, event=event, status='creator').save()
+    print(eventMember)
     return HttpResponseRedirect(reverse('event:index'))
 
 def save_member(request, event_id):

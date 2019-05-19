@@ -10,13 +10,17 @@ class Account(models.Model):
 
 class TransactionIn(models.Model):
     uid = models.UUIDField( default=uuid.uuid4, editable=False)
+    amount = models.DecimalField(max_digits = 10, decimal_places = 2)
     comes_from = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete = models.CASCADE)
     account = models.OneToOneField(Account, on_delete = models.CASCADE)
+    timestamp = models.DateTimeField(default=timezone.now, editable=False)
 
 class TransactionOut(models.Model):
     uid = models.UUIDField( default=uuid.uuid4, editable=False)
+    amount = models.DecimalField(max_digits = 10, decimal_places = 2)
     goes_to = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete = models.CASCADE)
     account = models.OneToOneField(Account, on_delete = models.CASCADE)
+    timestamp = models.DateTimeField(default=timezone.now, editable=False)
 
 class Event(models.Model):
     uid = models.UUIDField( default=uuid.uuid4, editable=False)
@@ -28,3 +32,17 @@ class Event(models.Model):
 
     def __str__(self):
         return self.name
+
+STATUS_CHOICES = (
+    ('creator', 'CREATOR'),
+    ('modarator','MODARATOR'),
+    ('admin','ADMIN'),
+    ('member','MEMBER'),
+)
+
+class EventMember(models.Model):
+    uid = models.UUIDField( default=uuid.uuid4, editable=False)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    status = models.CharField(max_length=9, choices=STATUS_CHOICES, default='member')
+    event = models.OneToOneField(Event, on_delete=models.CASCADE)
+    timestamp = models.DateTimeField(default = timezone.now, editable=False)

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Event, Account, TransactionIn, TransactionOut
+from .models import Event, Account, TransactionIn, TransactionOut, EventMember
 from polls.models import Question
 
 
@@ -18,8 +18,12 @@ class PollsInline(admin.TabularInline):
     model = Question
     extra = 1
 
+class EventMemberInline(admin.TabularInline):
+    model = EventMember
+    extra = 0
+
 class EventAdmin(admin.ModelAdmin):
-    inlines = [PollsInline]
+    inlines = [PollsInline, EventMemberInline]
 
 admin.site.register(Event, EventAdmin)
 admin.site.register(Account, AccountAdmin)
