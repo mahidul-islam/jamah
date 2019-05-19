@@ -9,18 +9,18 @@ from django.contrib import messages
 
 def index(request):
     template = loader.get_template('event/index.html')
-    try:
+    if request.user:
         eventbyme = Event.objects.filter(creator = request.user)
         eventbyall = request.user.event_set.all()
-    except:
-        context = {}
-        messages.success(request, 'Please Log in to use this feature')
-        return HttpResponse(template.render(context, request))
-    else:
         context = {
             'eventOfMine':eventbyme,
             'eventbyall':eventbyall
         }
+        return HttpResponse(template.render(context, request))
+
+    else:
+        context = {}
+        messages.success(request, 'Please Log in to use this feature')
         return HttpResponse(template.render(context, request))
 
 def detail(request, event_id):

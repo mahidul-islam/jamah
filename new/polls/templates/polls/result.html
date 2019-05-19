@@ -3,17 +3,28 @@
 
 {% block content %}
 
+<br><br>
+<h3 class="text-center">State for the poll: "<a href="{% url 'polls:detail' question.id %}">{{question.question_text}}</a>"</h3>
+<hr>
+<ul class="list-group">
+  {% for choice in choices %}
 
-<h1>{{question.question_text}}</h1>
+    <div class="row">
+      <div class="col-3">
+        <h3>Choice no {{forloop.counter}}:</h3>
+      </div>
+      <div class="col-9">
+        <li class="list-group-item d-flex justify-content-between align-items-center">{{ choice.choice_text }}
+          <span class="badge badge-primary badge-pill">{{ choice.votes }} vote{{ choice.votes|pluralize }}</span>
+        </li>
 
-<h4><a href="{% url 'polls:detail' question.id %}">Back To Question</a></h4>
-
-{% for choice in question.choice_set.all %}
-
-<ul>
-  <li>{{ choice.choice_text }} -- vote achived --- {{ choice.votes }} vote{{ choice.votes|pluralize }}</li>
+      </div>
+    </div>
+    <!-- <li class="list-group-item">
+    </li> -->
+    <!-- TODO: Add list of voter per choice  -->
+  {% endfor %}
 </ul>
-
-{% endfor %}
+<br><br>
 
 {% endblock %}

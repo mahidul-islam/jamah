@@ -22,7 +22,7 @@ def create(request):
             blog = form.save(commit = False)
             blog.author = request.user
             blog.save()
-            messages.success(request, "is double message working")
+            # messages.success(request, "is double message working")
             messages.add_message(request, messages.SUCCESS, 'Added new BLOG.')
             return HttpResponseRedirect(reverse('blog:allblog'))
     template = loader.get_template('blog/create.html')

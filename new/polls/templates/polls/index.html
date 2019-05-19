@@ -1,14 +1,14 @@
 {% extends 'new/base.html' %}
 {% load static %}
-
+{% load crispy_forms_tags %}
 {% block content %}
 
 {% include 'polls/snippet/allpolls.html' %}
 
 <form action="{% url 'polls:save_question' %}" method="post">
   {% csrf_token %}
-  <input type="text" name="question">
-  <input type="submit" value="Add Question">
+  {{form.question_text|as_crispy_field}}
+  <input class="btn btn-primary" type="submit" value="Add Question">
 </form>
 <br><br>
 {% endblock %}

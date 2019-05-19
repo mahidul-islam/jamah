@@ -1,17 +1,17 @@
+import uuid
 from django.db import models
 from django.conf import settings
 from event.models import Event
-import uuid
 from django.db.models.signals import post_save
+from django.utils import timezone
 
 
 class Question(models.Model):
     uid = models.UUIDField(  default=uuid.uuid4, editable=False)
     question_text = models.CharField(max_length = 200)
-    pub_date = models.DateTimeField('date published', blank=True, null=True)
-    creator = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True)
+    pub_date = models.DateTimeField('date published', default = timezone.now)
+    creator = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     event = models.ForeignKey(Event, blank = True, null = True, on_delete = models.CASCADE)
-    # TODO: made a signal for is part of event from event
     is_part_of_event = models.BooleanField(default = False)
 
     def save(self, *args, **kwargs):
@@ -27,16 +27,20 @@ class Choice(models.Model):
     question = models.ForeignKey(Question, on_delete = models.CASCADE)
     choice_text = models.CharField(max_length = 300)
     votes = models.IntegerField(default = 0)
-    creator = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True)
+    pub_date = models.DateTimeField('date created', default = timezone.now)
+    explanation = models.TextField(null = True, blank = True)
+    creator = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
     def __str__(self):
-        return ('Choice for question {}').format(self.question.id)
+        return self.choice_text
 
 class Vote(models.Model):
     uid = models.UUIDField(  default=uuid.uuid4, editable=False)
     question = models.ForeignKey(Question, on_delete = models.CASCADE)
     voter = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    choice_no = models.IntegerField()
+    vote_date = models.DateTimeField('date voted', default = timezone.now)
+    choice_no = models.IntegerField(null = True, blank = True)
+    choice = models.ForeignKey(Choice, on_delete=models.CASCADE)
 
 class Comment(models.Model):
     uid = models.UUIDField(  default=uuid.uuid4, editable=False)
@@ -47,15 +51,3 @@ class Comment(models.Model):
 
     def __str__(self):
         return ('Comment of Question{}').format(self.question.id)
-
-
-# def save_is_part_of_event_bool(sender, instance, **kwargs):
-#     # print(sender)
-#     if instance.event:
-#         print('got it ...................... got it')
-#         instance.is_part_of_event = True
-#         print(instance.question_text)
-#         print(instance.is_part_of_event)
-#     instance.is
-#
-# post_save.connect(save_is_part_of_event_bool, sender=Question)

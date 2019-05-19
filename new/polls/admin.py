@@ -1,9 +1,11 @@
 from django.contrib import admin
 from .models import Question, Choice, Comment, Vote
 
-class ChoiceInline(admin.StackedInline):
+class ChoiceInline(admin.TabularInline):
     model = Choice
-    extra = 1
+    extra = 0
+    readonly_fields = ['id']
+    fields = ['id', 'choice_text', 'votes', 'creator']
 
 class CommentInline(admin.TabularInline):
     model = Comment

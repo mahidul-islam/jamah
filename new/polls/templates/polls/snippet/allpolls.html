@@ -6,13 +6,18 @@
   <ul class="list-group">
     {% for poll in polls %}
       <li class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-        <a href="{% url 'polls:detail' poll.id %}">
-          {{poll.question_text}}
-        </a>
-        {% if user.is_staff or user == poll.creator %}
-          <a class="btn btn-danger" href="{% url 'polls:delete_question' poll.id %}">delete?</a>
-        {% endif %}
-        <span class="badge badge-primary badge-pill">{{poll.vote_set.count}}</span>
+        <span>Q:
+          <a href="{% url 'polls:detail' poll.id %}">
+            "{{poll.question_text}}"
+          </a>
+          <small>added {{poll.pub_date}}</small>
+        </span>
+        <span>
+          <span class="badge badge-primary badge-pill"> {{poll.vote_set.count}} vote</span>
+          {% if user.is_staff or user == poll.creator %}
+            <a class="btn btn-danger" href="{% url 'polls:delete_question' poll.id %}">delete?</a>
+          {% endif %}
+        </span>
       </li>
     {% endfor %}
   </ul>
