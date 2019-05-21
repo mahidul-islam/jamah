@@ -1,4 +1,13 @@
 from django.contrib import admin
-from .models import Jamah
+from .models import Jamah, JamahMember
 
-admin.site.register(Jamah)
+class JamahMemberInline(admin.TabularInline):
+    model = JamahMember
+    extra = 0
+
+class JamahAdmin(admin.ModelAdmin):
+    inlines = [JamahMemberInline]
+
+admin.site.register(Jamah, JamahAdmin)
+
+admin.site.register(JamahMember)

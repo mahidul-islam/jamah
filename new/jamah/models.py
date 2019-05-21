@@ -10,7 +10,7 @@ class Jamah(models.Model):
     creator = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='jamahs_of_you')
     members = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='members')
     timestamp = models.DateTimeField(default = timezone.now, editable=False)
-    requested_to_join = models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True)
+    requested_to_join = models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True, related_name='requested_jamah')
 
     def __str__(self):
         return self.jamahname
@@ -23,11 +23,12 @@ STATUS_CHOICES = (
 )
 
 class JamahMember(models.Model):
-    uid = models.UUIDField( default=uuid.uuid4, editable=False)
+    uid = models.UUIDField(default=uuid.uuid4, editable=False)
     member = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     status = models.CharField(max_length=9, choices=STATUS_CHOICES, default='member')
     jamah = models.ForeignKey(Jamah, on_delete=models.CASCADE)
     timestamp = models.DateTimeField(default = timezone.now, editable=False)
+    still_to_be_excepted = models.BooleanField(default = True)
 
     def __str__(self):
         return self.member.username

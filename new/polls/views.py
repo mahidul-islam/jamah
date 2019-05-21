@@ -34,7 +34,7 @@ def vote_count(question_id):
 
 def index(request):
     # TODO: exclude all question associated with events...
-    polls = Question.objects.all()
+    polls = Question.objects.exclude(is_part_of_event = True)
     template = loader.get_template('polls/index.html')
     data = {'creator':request.user}
     form = QuestionCreateForm(initial=data)

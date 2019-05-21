@@ -12,15 +12,12 @@
   {{form.jamahname|as_crispy_field}}
   <button class="btn btn-primary" type="submit"> Create !!! </button>
 </form>
+<br>
+<br><br>
+<h3 class="text-center"><mark>All The Jamah</mark></h3>
 <hr>
-<br><br>
-<h3 class="lead">Jamah created by you:</h3>
 <br>
-  {% include 'jamah/snippet/allyourjamah.html' with jamahs=jamah_by_me %}
-<br><br>
-<h3 class="lead">All of Your's Jamah:</h3>
-<br>
-  {% include 'jamah/snippet/allyourjamah.html' with jamahs=jamah_by_all %}
+  {% include 'jamah/snippet/alljamah.html' with jamahs=all_jamah %}
 <br>
 <br>
 {% endif %}

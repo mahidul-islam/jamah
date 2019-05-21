@@ -14,9 +14,9 @@
           </small>
         </span>
         <span>
-          <span class="badge badge-info badge-pill"> {{jamah.members.count}} member</span>
-          {% if True %}
-            <a class="btn btn-primary" href="{% url 'jamah:join_jamah' jamah.id %}">Join?</a>
+          <span class="badge badge-primary badge-pill"> {{jamah.members.count}} member</span>
+          {% if user.is_admin or user == jamah.creator %}
+            <a class="btn btn-danger" href="#">Archive?</a>
           {% endif %}
         </span>
       </li>

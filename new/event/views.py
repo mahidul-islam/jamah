@@ -12,7 +12,7 @@ from polls.models import Question
 
 def index(request):
     template = loader.get_template('event/index.html')
-    if request.user:
+    if request.user.is_authenticated:
         form = EeventCreateForm()
         eventbyme = Event.objects.filter(creator = request.user)
         eventbyall = request.user.event_set.all()
@@ -22,7 +22,6 @@ def index(request):
             'eventbyall':eventbyall
         }
         return HttpResponse(template.render(context, request))
-
     else:
         context = {}
         messages.success(request, 'Please Log in to use this feature')
