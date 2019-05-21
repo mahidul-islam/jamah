@@ -4,16 +4,6 @@
 {% block content %}
 
 <br>
-{% if user.is_authenticated %}
-<h3 class="display-4">Create a new EVENT</h3>
-
-<form action="{% url 'event:create' %}" method="post">
-  {% csrf_token %}
-  {{form.name|as_crispy_field}}
-  <button class="btn btn-primary" type="submit"> Create !!! </button>
-</form>
-<hr>
-<br><br>
 <h3 class="lead">Event created by you:</h3>
 <br>
   {% include 'event/snippet/allevent.html' with events=eventOfMine %}
@@ -23,6 +13,5 @@
   {% include 'event/snippet/allevent.html' with events=eventbyall %}
 <br>
 <br>
-{% endif %}
 
 {% endblock %}

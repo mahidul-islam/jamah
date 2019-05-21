@@ -5,7 +5,7 @@ from .models import Event, Account, EventMember
 from django.urls import reverse
 from user.models import MyUser
 from django.contrib import messages
-from .forms import EeventCreateForm
+from .forms import EventCreateForm
 from polls.forms import QuestionCreateForm
 from polls.models import Question
 
@@ -13,7 +13,7 @@ from polls.models import Question
 def index(request):
     template = loader.get_template('event/index.html')
     if request.user.is_authenticated:
-        form = EeventCreateForm()
+        form = EventCreateForm()
         eventbyme = Event.objects.filter(creator = request.user)
         eventbyall = request.user.event_set.all()
         context = {
@@ -29,7 +29,7 @@ def index(request):
 
 def detail(request, event_id):
     event = Event.objects.get(pk = event_id)
-    users = MyUser.objects.all()
+    users = event.jamah.members.all()
     template = loader.get_template('event/detail.html')
     eventmembers = event.members.all()
     polls = event.question_set.all()
@@ -42,17 +42,17 @@ def detail(request, event_id):
     }
     return HttpResponse(template.render(context, request))
 
-def create(request):
-    name = request.POST['name']
-    account = Account()
-    account.save()
-    event = Event(name = name, creator = request.user, account = account)
-    event.save()
-    event.members.add(request.user)
-    event.save()
-    eventMember = EventMember(member=request.user, event=event, status='creator').save()
-    print(eventMember)
-    return HttpResponseRedirect(reverse('event:index'))
+# def create(request):
+#     name = request.POST['name']
+#     account = Account()
+#     account.save()
+#     event = Event(name = name, creator = request.user, account = account)
+#     event.save()
+#     event.members.add(request.user)
+#     event.save()
+#     eventMember = EventMember(member=request.user, event=event, status='creator').save()
+#     print(eventMember)
+#     return HttpResponseRedirect(reverse('event:index'))
 
 def save_member(request, event_id):
     event = Event.objects.get(pk = event_id)

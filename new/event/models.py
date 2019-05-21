@@ -14,12 +14,12 @@ class Event(models.Model):
     uid = models.UUIDField( default=uuid.uuid4, editable=False)
     name = models.CharField(max_length = 200)
     date = models.DateTimeField(default = timezone.now)
-    creator = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete = models.CASCADE, related_name = 'Boss')
+    creator = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete = models.CASCADE, related_name = 'created_events')
     members = models.ManyToManyField(settings.AUTH_USER_MODEL, blank = True)
     account = models.OneToOneField(Account, on_delete = models.CASCADE)
     is_donation_only_event = models.BooleanField(default = False)
-    official_blog = models.OneToOneField(Blog, on_delete=models.CASCADE, blank=True, null=True)
-    # jamah = models.ForeignKey(Jamah, on_delete=models.CASCADE, default=None)
+    # official_blog = models.OneToOneField(Blog, on_delete=models.CASCADE, blank=True, null=True)
+    jamah = models.ForeignKey(Jamah, on_delete=models.CASCADE, related_name = 'events')
 
     def __str__(self):
         return self.name

@@ -1,4 +1,4 @@
 from django import forms
 
-class EeventCreateForm(forms.Form):
+class EventCreateForm(forms.Form):
     name = forms.CharField(max_length=200)

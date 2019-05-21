@@ -4,7 +4,13 @@
 {% block content %}
 
 <br>
-<h3 class="text-center">Event Details</h3>
+<h3 class="text-center">
+  Event Details
+  <small>
+    of the jamah:
+    <a href="{% url 'jamah:detail' event.jamah.id %}">{{event.jamah.jamahname}}</a>
+  </small>
+</h3>
 <hr>
 <br>
 <h3>Event:"<mark>{{event.name}}</mark>"

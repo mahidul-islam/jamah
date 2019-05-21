@@ -1,0 +1,40 @@
+{% extends 'new/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<br>
+<h3 class="text-center">Jamah Details</h3>
+<hr>
+<br>
+<h3>Jamah:"<mark>{{jamah.jamahname}}</mark>"
+  <small>
+    Created by --
+    <a href="{% url 'profile:user_profile' jamah.creator.id %}">
+      "{{jamah.creator.username|upper}}"
+    </a>
+  </small>
+</h3>
+<br>
+<h3 class="lead">Existing members:</h3>
+{% include 'jamah/snippet/alljamahmember.html' with jamah=jamah %}
+<br><br>
+<mark>Launch a Event for this Jamah</mark>
+<form action="{% url 'jamah:create_jamah_event' jamah.id %}" method="post">
+  {% csrf_token %}
+  {{eventForm.name|as_crispy_field}}
+  <input class="btn btn-primary" type="submit" name="" value=" Create Event !!! ">
+</form>
+<br>
+<br>
+<h3 class="lead" >Events:</h3>
+{% include 'event/snippet/allevent.html' with events=events %}
+{% if user.is_staff or user == jamah.creator %}
+  <br><br>
+  <h3 class="lead">Accept Member:</h3>
+  {% include 'jamah/snippet/allrequests.html' with jamah=jamah %}
+  <br>
+  <br>
+{% endif %}
+
+{% endblock %}

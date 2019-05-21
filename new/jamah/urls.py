@@ -9,4 +9,6 @@ urlpatterns = [
     path('<int:jamah_id>/join', views.join_jamah, name='join_jamah'),
     path('<int:jamah_id>', views.detail, name='detail'),
     path('create', views.create, name='create'),
+    path('<int:jamah_id>/<int:jamahmember_id>', views.save_member, name='save_member'),
+    path('<int:jamah_id>/create_jamah_event', views.create_jamah_event, name = 'create_jamah_event'),
 ]

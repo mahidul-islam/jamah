@@ -6,6 +6,9 @@ from django.urls import reverse
 from user.models import MyUser
 from django.contrib import messages
 from .forms import JamahCreateForm
+from event.forms import EventCreateForm
+from django.utils import timezone
+from event.models import Event, Account, EventMember
 
 
 def index(request):
@@ -30,7 +33,17 @@ def index(request):
         return HttpResponse(template.render(context, request))
 
 def detail(request, jamah_id):
-    return HttpResponse("This is jamah detail")
+    jamah = Jamah.objects.get(pk = jamah_id)
+    jamahmembers = jamah.members.all()
+    events = jamah.events.all()
+    template = loader.get_template('jamah/detail.html')
+    form = EventCreateForm()
+    context = {
+        'eventForm': form,
+        'events': events,
+        'jamah': jamah,
+    }
+    return HttpResponse(template.render(context, request))
 
 def alljamah(request):
     template = loader.get_template('jamah/jamahs.html')
@@ -68,7 +81,6 @@ def join_jamah(request, jamah_id):
         return HttpResponseRedirect(reverse('jamah:all_jamah'))
 
 def create(request):
-    print(request.POST)
     name = request.POST['jamahname']
     jamah = Jamah(jamahname = name, creator = request.user)
     jamah.save()
@@ -77,3 +89,27 @@ def create(request):
     jamahMember = JamahMember(member=request.user, jamah=jamah, status='creator', still_to_be_excepted=False).save()
     # print(jamahMember)
     return HttpResponseRedirect(reverse('jamah:all_jamah'))
+
+def save_member(request, jamah_id, jamahmember_id):
+    jamah = Jamah.objects.get(pk = jamah_id)
+    jamahmember = JamahMember.objects.get(pk = jamahmember_id)
+    jamahmember.still_to_be_excepted = False
+    jamah.members.add(jamahmember.member)
+    jamah.requested_to_join.remove(jamahmember.member)
+    jamahmember.timestamp = timezone.now()
+    jamah.save()
+    jamahmember.save()
+    return HttpResponseRedirect(reverse('jamah:detail', args = (jamah_id,)))
+
+def create_jamah_event(request, jamah_id):
+    jamah = Jamah.objects.get(pk = jamah_id)
+    name = request.POST['name']
+    messages.success(request, 'Added a Event for the jamah...')
+    account = Account()
+    account.save()
+    event = Event(name = name, creator = request.user, account = account, jamah=jamah)
+    event.save()
+    event.members.add(request.user)
+    event.save()
+    eventMember = EventMember(member=request.user, event=event, status='creator').save()
+    return HttpResponseRedirect(reverse('jamah:detail', args = (jamah_id,)))

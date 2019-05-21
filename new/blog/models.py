@@ -15,8 +15,3 @@ class Blog(models.Model):
 
     def __str__(self):
         return self.heading_text
-
-class VoteForBlog(models.Model):
-    uid = models.UUIDField(default=uuid.uuid4, editable=False)
-    blog = models.ForeignKey(Blog, on_delete = models.CASCADE)
-    voter = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)

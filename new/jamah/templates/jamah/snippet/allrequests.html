@@ -1,0 +1,23 @@
+{% if jamah.requested_to_join.count %}
+  <ul class="list-group">
+    {% for jamahmember in jamah.jamahmember_set.all %}
+      {% if jamahmember.still_to_be_excepted %}
+        <li class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+          <span>
+            <a href="{% url 'profile:user_profile' jamahmember.member.id %}">
+              {{jamahmember.member.username|upper}}
+            </a>
+            <small>requested at {{jamahmember.timestamp}}</small>
+          </span>
+          <!-- TODO: add a form -->
+          <a class="btn btn-primary" href="{% url 'jamah:save_member' jamah.id jamahmember.id %}">
+            Accept?
+          </a>
+        </li>
+      {% endif %}
+    {% endfor %}
+  </ul>
+{% else %}
+  <br>
+  <p class="lead"><mark>There seem to be no request to accept</mark></p>
+{% endif %}
