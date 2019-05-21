@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from django.utils import timezone
+from blog.models import Blog
 import uuid
 
 
@@ -29,6 +30,8 @@ class Event(models.Model):
     creator = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete = models.CASCADE, related_name = 'Boss')
     members = models.ManyToManyField(settings.AUTH_USER_MODEL, blank = True)
     account = models.OneToOneField(Account, on_delete = models.CASCADE)
+    is_donation_only_event = models.BooleanField(default = False)
+    official_blog = models.OneToOneField(Blog, on_delete=models.CASCADE, blank=True, null=True)
 
     def __str__(self):
         return self.name
@@ -42,7 +45,10 @@ STATUS_CHOICES = (
 
 class EventMember(models.Model):
     uid = models.UUIDField( default=uuid.uuid4, editable=False)
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    member = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     status = models.CharField(max_length=9, choices=STATUS_CHOICES, default='member')
-    event = models.OneToOneField(Event, on_delete=models.CASCADE)
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
     timestamp = models.DateTimeField(default = timezone.now, editable=False)
+
+    def __str__(self):
+        return self.member.username

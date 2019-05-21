@@ -80,3 +80,13 @@ def create_event_poll(request, event_id):
     poll = Question(question_text=question_text, creator=request.user, event=event).save()
     messages.success(request, 'Added a Poll for the event...')
     return HttpResponseRedirect(reverse('event:detail', args = (event_id,)))
+
+def donate(request, event_id):
+    template = loader.get_template('event/donate.html')
+    context = {}
+    return HttpResponse(template.render(context, request))
+
+def pay(request, event_id):
+    template = loader.get_template('event/pay.html')
+    context = {}
+    return HttpResponse(template.render(context, request))

@@ -1,0 +1,29 @@
+<ul class="list-group">
+{% for comment in question.comment_set.all %}
+  <li class="list-group-item d-flex justify-content-between align-items-center">
+    <span>
+      {{comment.comment_text}}
+      <small>
+        added by --
+        <a href="{% url 'profile:user_profile' comment.commenter.id %}">
+          {{comment.commenter.username}},
+        </a>
+        {{comment.pub_date|timesince}} ago.
+      </small>
+    </span>
+    <span>
+      {% if comment.commenter == question.creator %}
+        <span class="badge badge-pill badge-primary">Poll Creator</span>
+      {% endif %}
+      {% if question.is_part_of_event %}
+        {% if comment.commenter == question.event.creator %}
+          <span class="badge badge-pill badge-primary">Event Creator</span>
+        {% endif %}
+        {% if comment.commenter in question.event.member %}
+          <span class="badge badge-pill badge-primary">Event Member</span>
+        {% endif %}
+      {% endif %}
+    </span>
+  </li>
+{% endfor %}
+</ul>

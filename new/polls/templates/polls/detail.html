@@ -5,7 +5,14 @@
 
 <div class="container">
   <br>
-  <h3 class="text-center">Polls Details:</h3>
+  <h3 class="text-center">Polls Details:
+    {% if question.is_part_of_event %}
+      <small class="lead"> of Event </small>
+      "<a href="{% url 'event:detail' question.event.id %}">
+        <mark>{{question.event.name}}</mark>
+      </a>"
+    {% endif %}
+  </h3>
   <hr>
   <h3>Q:"<mark>{{question.question_text}}</mark>"
     <small>
@@ -33,7 +40,12 @@
     <input type="radio" name="choice" value="{{choice.id}}" id="choice{{choice.id}}">
     <label for="choice{{choice.id}}">
       {{choice.choice_text}},
-        <small>added by -- {{choice.creator.username|upper}}</small>
+        <small>
+          added by --
+          <a href="{% url 'profile:user_profile' choice.creator.id %}">
+            {{choice.creator.username|upper}}
+          </a>
+        </small>
     </label>
     <br>
     {% endfor %}
@@ -55,15 +67,9 @@
 
   <br>
   <h3>Comments:</h3>
-  <ul class="list-group">
-  {% for comment in question.comment_set.all %}
-    <li class="list-group-item">{{comment.comment_text}}
-      <small>
-        added by -- {{comment.commenter.username}}
-      </small>
-    </li>
-  {% endfor %}
-  </ul>
+
+  {% include 'polls/snippet/allcomments.html' with question=question  %}
+
   <form action="{% url 'polls:save_comment' question.id %}" method="post">
     {% csrf_token %}
     {{commentForm.comment_text|as_crispy_field}}

@@ -10,10 +10,12 @@
   </h2>
   <hr>
   <br>
-  <h3>All Event of Yours:</h3>
+  <h3>All Event of {{user|upper}}:</h3>
   <br>
   {% include 'event/snippet/allevent.html' %}
-
+  <br>
+<h3>Polls {{user|upper}} Created:</h3>
+  <br>
   {% include 'polls/snippet/allpolls.html' %}
   <br>
 </div>

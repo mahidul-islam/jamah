@@ -10,6 +10,7 @@
         </span>
         <span>
           <span class="badge badge-primary badge-pill"> {{poll.vote_set.count}} vote</span>
+          <a class="btn btn-info" href="{% url 'polls:result' poll.id %}">Result.</a>
           {% if user.is_staff or user == poll.creator %}
             <a class="btn btn-danger" href="{% url 'polls:delete_question' poll.id %}">delete?</a>
           {% endif %}
@@ -18,5 +19,6 @@
     {% endfor %}
   </ul>
 {% else %}
-  <h3 class="lead">There seem to be no polls....</h3>
+  <br>
+  <h3 class="lead"><mark>There seem to be no polls....</mark></h3>
 {% endif %}
