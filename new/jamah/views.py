@@ -13,10 +13,10 @@ def index(request):
     if request.user:
         form = JamahCreateForm()
         jamah_by_me = Jamah.objects.filter(creator = request.user)
-        jamah_by_all = request.user.jamah_set.all()
+        jamah_by_all = request.user.jamahs_of_you.all()
         all_jamah = Jamah.objects.all()
-        print(jamah_by_all)
-        print('-----------------------------------------------------------------')
+        # print(jamah_by_all)
+        # print('-----------------------------------------------------------------')
         context = {
             'form': form,
             'jamah_by_me': jamah_by_me,
@@ -26,7 +26,7 @@ def index(request):
 
     else:
         context = {}
-        messages.success(request, 'Please Log in to use this feature')
+        messages.info(request, 'Please Log in to use this feature')
         return HttpResponse(template.render(context, request))
 
 def detail(request, jamah_id):
