@@ -1,0 +1,28 @@
+{% extends 'new/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<br>
+{% if user.is_authenticated %}
+<h3 class="display-4">Create a new Jamah</h3>
+
+<form action="{% url 'jamah:create' %}" method="post">
+  {% csrf_token %}
+  {{form.jamahname|as_crispy_field}}
+  <button class="btn btn-primary" type="submit"> Create !!! </button>
+</form>
+<hr>
+<br><br>
+<h3 class="lead">Jamah created by you:</h3>
+<br>
+  {% include 'jamah/snippet/alljamah.html' with jamahs=jamah_by_me %}
+<br><br>
+<h3 class="lead">All of Your's Jamah:</h3>
+<br>
+  {% include 'jamah/snippet/alljamah.html' with jamahs=jamah_by_all %}
+<br>
+<br>
+{% endif %}
+
+{% endblock %}

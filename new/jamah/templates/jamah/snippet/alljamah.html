@@ -1,0 +1,27 @@
+{% if jamahs.count %}
+  <ul class="list-group">
+    {% for jamah in jamahs %}
+      <li class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+        <span>
+          <a href="{% url 'jamah:detail' jamah.id %}">
+            {{jamah.jamahname}}
+          </a>
+          <small>
+            Created by --
+            <a href="{% url 'profile:user_profile' jamah.creator.id %}">
+              {{ jamah.creator.username|upper }}
+            </a>
+          </small>
+        </span>
+        <span>
+          <span class="badge badge-primary badge-pill"> {{jamah.members.count}} member</span>
+          {% if user.is_admin or user == jamah.creator %}
+            <a class="btn btn-danger" href="#">Archive?</a>
+          {% endif %}
+        </span>
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <h3>There seem to be no Jamah!!!</h3>
+{% endif %}

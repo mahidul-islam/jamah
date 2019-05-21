@@ -3,12 +3,7 @@
 {% load crispy_forms_tags %}
 {% block content %}
 
-
-{% if message %}
-<h3>{{message}}</h3>
-{% endif %}
 <br>
-
 {% if user.is_authenticated %}
 <h3 class="display-4">Create a new EVENT</h3>
 

@@ -61,7 +61,7 @@ def save_member(request, event_id):
     for value in values:
         user = MyUser.objects.get(pk = value)
         event.members.add(user)
-        eventMember = EventMember(member=user, event=event, status='member').save()
+        eventMember = EventMember(member=user, event=event).save()
         print(eventMember)
         print(user)
     event.save()

@@ -35,6 +35,9 @@
         <a class="nav-link"  href="{% url 'event:index' %}">Events</a>
       </li>
       <li class="nav-item">
+        <a class="nav-link"  href="{% url 'jamah:index' %}">Jamahs</a>
+      </li>
+      <li class="nav-item">
       </li>
       <a class="nav-link"  href="{% url 'product:index' %}">Products</a>
       {% if not user.is_authenticated %}
