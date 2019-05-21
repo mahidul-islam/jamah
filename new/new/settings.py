@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'event',
     'user',
     'userProfile',
+    'jamah',
     'blog',
     'crispy_forms',
     'rules',

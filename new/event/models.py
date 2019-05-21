@@ -2,26 +2,13 @@ from django.db import models
 from django.conf import settings
 from django.utils import timezone
 from blog.models import Blog
+from jamah.models import Jamah
 import uuid
 
 
 class Account(models.Model):
     uid = models.UUIDField( default=uuid.uuid4, editable=False)
     amount = models.DecimalField(max_digits = 10, decimal_places = 2, default = 0)
-
-class TransactionIn(models.Model):
-    uid = models.UUIDField( default=uuid.uuid4, editable=False)
-    amount = models.DecimalField(max_digits = 10, decimal_places = 2)
-    comes_from = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete = models.CASCADE)
-    account = models.OneToOneField(Account, on_delete = models.CASCADE)
-    timestamp = models.DateTimeField(default=timezone.now, editable=False)
-
-class TransactionOut(models.Model):
-    uid = models.UUIDField( default=uuid.uuid4, editable=False)
-    amount = models.DecimalField(max_digits = 10, decimal_places = 2)
-    goes_to = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete = models.CASCADE)
-    account = models.OneToOneField(Account, on_delete = models.CASCADE)
-    timestamp = models.DateTimeField(default=timezone.now, editable=False)
 
 class Event(models.Model):
     uid = models.UUIDField( default=uuid.uuid4, editable=False)
@@ -32,6 +19,7 @@ class Event(models.Model):
     account = models.OneToOneField(Account, on_delete = models.CASCADE)
     is_donation_only_event = models.BooleanField(default = False)
     official_blog = models.OneToOneField(Blog, on_delete=models.CASCADE, blank=True, null=True)
+    # jamah = models.ForeignKey(Jamah, on_delete=models.CASCADE, default=None)
 
     def __str__(self):
         return self.name
@@ -52,3 +40,28 @@ class EventMember(models.Model):
 
     def __str__(self):
         return self.member.username
+
+class Cost(models.Model):
+    uid = models.UUIDField(default=uuid.uuid4, editable=False)
+    timestamp = models.DateTimeField(default = timezone.now)
+    added_by = models.ForeignKey(EventMember, on_delete=models.CASCADE, related_name='creator')
+    amount = models.DecimalField(max_digits = 10, decimal_places = 2)
+    per_head_cost = models.DecimalField(max_digits = 10, decimal_places = 2)
+    extracted_money = models.BooleanField(default = False)
+    cost_bearer = models.ManyToManyField(EventMember, blank=True)
+
+class TransactionIn(models.Model):
+    uid = models.UUIDField( default=uuid.uuid4, editable=False)
+    amount = models.DecimalField(max_digits = 10, decimal_places = 2)
+    comes_from = models.ForeignKey(EventMember, on_delete = models.CASCADE)
+    account = models.ForeignKey(Account, on_delete = models.CASCADE)
+    timestamp = models.DateTimeField(default=timezone.now, editable=False)
+    is_donation = models.BooleanField(default=False)
+    part_of_cost = models.ForeignKey(Cost, on_delete=models.CASCADE, default=None)
+
+class TransactionOut(models.Model):
+    uid = models.UUIDField( default=uuid.uuid4, editable=False)
+    amount = models.DecimalField(max_digits = 10, decimal_places = 2)
+    goes_to = models.ForeignKey(EventMember, on_delete = models.CASCADE)
+    account = models.ForeignKey(Account, on_delete = models.CASCADE)
+    timestamp = models.DateTimeField(default=timezone.now, editable=False)

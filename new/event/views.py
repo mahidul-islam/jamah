@@ -51,7 +51,7 @@ def create(request):
     event.save()
     event.members.add(request.user)
     event.save()
-    eventMember = EventMember(user=request.user, event=event, status='creator').save()
+    eventMember = EventMember(member=request.user, event=event, status='creator').save()
     print(eventMember)
     return HttpResponseRedirect(reverse('event:index'))
 
@@ -61,6 +61,8 @@ def save_member(request, event_id):
     for value in values:
         user = MyUser.objects.get(pk = value)
         event.members.add(user)
+        eventMember = EventMember(member=user, event=event, status='member').save()
+        print(eventMember)
         print(user)
     event.save()
     # print(event.members.all())
