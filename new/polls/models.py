@@ -11,7 +11,7 @@ class Question(models.Model):
     question_text = models.CharField(max_length = 200)
     pub_date = models.DateTimeField('date published', default = timezone.now)
     creator = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    event = models.ForeignKey(Event, blank = True, null = True, on_delete = models.CASCADE)
+    event = models.ForeignKey(Event, blank = True, null = True, on_delete = models.CASCADE, related_name='polls')
     is_part_of_event = models.BooleanField(default = False)
 
     def save(self, *args, **kwargs):

@@ -29,16 +29,18 @@ def index(request):
 
 def detail(request, event_id):
     event = Event.objects.get(pk = event_id)
-    users = event.jamah.members.all()
+    users_to_add = event.jamah.members.all()
     template = loader.get_template('event/detail.html')
-    eventmembers = event.members.all()
-    polls = event.question_set.all()
+    eventmembers = EventMember.objects.filter(event=event)
+    print(eventmembers)
+    polls = event.polls.all()
     form = QuestionCreateForm()
     context = {
+        'eventmembers': eventmembers,
         'pollForm': form,
         'polls': polls,
         'event': event,
-        'users': users,
+        'users': users_to_add,
     }
     return HttpResponse(template.render(context, request))
 
@@ -59,10 +61,15 @@ def save_member(request, event_id):
     values = request.POST.getlist('member')
     for value in values:
         user = MyUser.objects.get(pk = value)
-        event.members.add(user)
-        eventMember = EventMember(member=user, event=event).save()
-        print(eventMember)
+        eventmember = EventMember.objects.filter(member=user).filter(event=event)
+        print(eventmember)
         print(user)
+        if not eventmember.count():
+            event.members.add(user)
+            eventMember = EventMember(member=user, event=event).save()
+        else:
+            messages.warning(request, 'The member is already in the event')
+            # return HttpResponseRedirect(reverse('event:detail', args = (event_id,)))
     event.save()
     # print(event.members.all())
     return HttpResponseRedirect(reverse('event:detail', args = (event_id,)))
