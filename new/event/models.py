@@ -4,6 +4,7 @@ from django.utils import timezone
 from blog.models import Blog
 from jamah.models import Jamah
 import uuid
+import math
 
 
 class Account(models.Model):

@@ -1,3 +1,4 @@
+import math
 from django.shortcuts import render
 from django.contrib import messages
 from django.urls import reverse
@@ -39,14 +40,19 @@ def detail(request, event_id):
 
     template = loader.get_template('event/detail.html')
     eventmembers = EventMember.objects.filter(event=event)
-    # print(eventmembers)
-    current_eventmember = EventMember.objects.filter(event=event).filter(member=request.user)
+
+    current_eventmember = EventMember.objects.get(event=event, member=request.user)
+    print(current_eventmember)
     polls = event.polls.all()
     costs = event.cost_set.all()
     pollform = QuestionCreateForm()
     costform = CostCreateForm()
+    userform = UserAddForm()
+    # todo use form for this
+    # userform.fields['choice'].choices = users_to_add
     context = {
         'costs': costs,
+        # 'userform': userform,
         'current_eventmember': current_eventmember,
         'eventmembers': eventmembers,
         'pollForm': pollform,
@@ -57,6 +63,28 @@ def detail(request, event_id):
     }
     return HttpResponse(template.render(context, request))
 
+def cost_detail(request, event_id, cost_id):
+    cost = Cost.objects.get(pk = cost_id)
+    event = cost.event
+    eventmember = EventMember.objects.get(event=event, member=request.user)
+    template = loader.get_template('event/cost_detail.html')
+    cost_transaction_ins = cost.cost_transaction_ins.all()
+    recieved = 0
+    donation = 0
+    for transaction in cost_transaction_ins:
+        if transaction.is_donation:
+            donation += transaction.amount
+        recieved += transaction.amount
+    context = {
+        'cost_transaction_ins': cost_transaction_ins,
+        'donation': donation,
+        'recieved': recieved,
+        'current_eventmember': eventmember,
+        'cost': cost
+    }
+    print(eventmember)
+    return HttpResponse(template.render(context, request))
+
 def create_event_cost(request, event_id):
     event = Event.objects.get(pk = event_id)
     name = request.POST['name']
@@ -64,7 +92,7 @@ def create_event_cost(request, event_id):
     eventmember = EventMember.objects.filter(event=event).filter(member=request.user)[:1]
     eventmembers = event.eventmember_set.all()
     # print(type(amount))
-    per_head_cost = float(amount)/eventmembers.count()
+    per_head_cost = math.ceil(float(amount)/eventmembers.count())
     cost = Cost(amount=amount, name=name, added_by=eventmember[0], per_head_cost=per_head_cost, event=event)
     cost.save()
     for event_member in eventmembers:

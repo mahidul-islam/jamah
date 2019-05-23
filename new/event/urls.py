@@ -15,4 +15,5 @@ urlpatterns = [
     path('<int:event_id>/donate', views.donate, name = 'donate'),
     path('<int:event_id>/cost_pay', views.pay, name = 'cost_pay'),
     path('<int:event_id>/cost_donate', views.donate, name = 'cost_donate'),
+    path('<int:event_id>/cost/<int:cost_id>', views.cost_detail, name='cost_detail')
 ]

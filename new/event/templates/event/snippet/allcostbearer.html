@@ -1,0 +1,17 @@
+{% if cost.cost_bearer.count %}
+  <ul class="list-group">
+    {% for eventmember in cost.cost_bearer.all %}
+      <li class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+        <span>
+          <a href="{% url 'profile:user_profile' eventmember.member.id %}">
+            {{eventmember.member.username|upper}}
+          </a>
+        </span>
+        <span class="badge badge-primary badge-pill"> {{eventmember.status}} </span>
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <br>
+  <h3 class="lead"><mark>There seem to be no Cost Bearer yet !!!</mark></h3>
+{% endif %}

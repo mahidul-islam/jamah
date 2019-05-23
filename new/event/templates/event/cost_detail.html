@@ -1,0 +1,62 @@
+{% extends 'new/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<br>
+<h3 class="text-center">
+  Cost Details
+  <small>
+    of the event:
+    <a href="{% url 'event:detail' cost.event.id %}">{{cost.event.name}}</a>
+  </small>
+</h3>
+<hr>
+<br>
+<h3>Cost:"<mark>{{cost.name}}</mark>"
+  <small>
+    Created by --
+    <a href="{% url 'profile:user_profile' cost.added_by.id %}">
+      "{{cost.added_by.member.username|upper}}"
+    </a>
+  </small>
+</h3>
+<br>
+<p class="text-center h1"><small>Total COST:</small> <mark>{{cost.amount}}</mark></p>
+<p class="text-center h1"><small>Per head COST:</small> <mark>{{cost.per_head_cost}}</mark></p>
+<p class="text-center h1"><small>Total Recieved:</small> <mark>{{recieved}}</mark></p>
+<p class="text-center h1"><small>Total Donation:</small> <mark>{{donation}}</mark></p>
+
+<br>
+<h3 class="lead">Cost Bearers:</h3>
+<br>
+{% include 'event/snippet/allcostbearer.html' with cost=cost %}
+<br>
+
+<br>
+<h3 class="lead">All Transactions:</h3>
+<br>
+{% include 'event/snippet/alltransactions.html' with transaction=cost_transaction_ins %}
+<br>
+
+{% if user.is_staff or user == current_eventmember.is_responsible %}
+
+  <br>
+  <h3 class="lead">Delete Member:</h3>
+  <form action="#" method="post">
+    {% csrf_token %}
+    <ol class="list-group">
+      {% for eventmember in cost.cost_bearer.all %}
+        <li class="list-group-item">
+          <input type="checkbox" name="member" value="{{ eventmember.member.id }}">
+          <a href="{% url 'profile:user_profile' user.id %}">{{ eventmember.member.username }}</a>
+        </li>
+      {% endfor %}
+    </ol>
+    <br>
+    <input class="btn btn-danger" type="submit" value="Delete Member">
+  </form>
+  <br><br>
+{% endif %}
+
+{% endblock %}

@@ -11,4 +11,4 @@ class TransactionInForm(forms.Form):
     pass
 
 class UserAddForm(forms.Form):
-    choice = forms.MultipleChoiceField(queryset = None ,widget=forms.CheckBoxSelectMultiple)
+    choice = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple)
