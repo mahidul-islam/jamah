@@ -23,6 +23,7 @@
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
           <a class="dropdown-item" href="{% url 'profile:user_profile' user.id %}">Profile</a>
+          <a class="dropdown-item"  href="{% url 'event:index' %}">Events</a>
           <div class="dropdown-divider"></div>
           <a class="dropdown-item" href="{% url 'logout' %}">Log Out</a>
         </div>
@@ -30,9 +31,6 @@
       {% endif %}
       <li class="nav-item">
         <a class="nav-link"  href="{% url 'polls:index' %}">Polls</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link"  href="{% url 'event:index' %}">Events</a>
       </li>
       <li class="nav-item">
         <a class="nav-link"  href="{% url 'jamah:all_jamah' %}">Jamahs</a>

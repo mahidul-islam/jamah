@@ -29,6 +29,15 @@ class JamahMember(models.Model):
     jamah = models.ForeignKey(Jamah, on_delete=models.CASCADE)
     timestamp = models.DateTimeField(default = timezone.now, editable=False)
     still_to_be_excepted = models.BooleanField(default = True)
+    is_responsible = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.member.username
+
+def save(self, *args, **kwargs):
+    if not self.status=='member':
+        self.is_responsible = True
+    super(JamahMember, self).save(*args, **kwargs)
 
     def __str__(self):
         return self.member.username

@@ -5,17 +5,16 @@
 
 <div class="container">
   <br>
-  <h2 class="text-center" >{{user|upper}}
+  <h3 class="text-center" >{{user|upper}}
     <small class="text-center lead">- Joined {{ user.date_joined|timesince }} ago</small>
-  </h2>
+  </h3>
   <hr>
   <br>
-  <h3>All Event of {{user|upper}}:</h3>
+  <h3 class="lead">All Jamah made by {{user|upper}}:</h3>
+  {% include 'jamah/snippet/alljamah.html' with jamahs=jamahs %}
   <br>
-  {% include 'event/snippet/allevent.html' %}
   <br>
-<h3>Polls {{user|upper}} Created:</h3>
-  <br>
+  <h3 class="lead">Polls {{user|upper}} Created:</h3>
   {% include 'polls/snippet/allpolls.html' %}
   <br>
 </div>

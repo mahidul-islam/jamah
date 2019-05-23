@@ -37,8 +37,22 @@
 
 {% include 'polls/snippet/allpolls.html' with polls=polls %}
 
-{% if user.is_staff or user == event.creator %}
-  <!-- TODO: link it to the polls create questoin -->
+{% if user.is_staff or user == current_eventmember.is_responsible %}
+
+  <br><br>
+  <mark>Create a cost for this event</mark>
+  <form action="{% url 'event:create_event_cost' event.id %}" method="post">
+    {% csrf_token %}
+    {{costform.name|as_crispy_field}}
+    {{costform.amount|as_crispy_field}}
+    <input class="btn btn-primary" type="submit" name="" value=" Create Cost !!! ">
+  </form>
+  <br>
+  <br>
+  <h3 class="lead" >Costs:</h3>
+
+  {% include 'event/snippet/allcosts.html' with costs=costs eventmember=current_eventmember %}
+
   <br><br>
   <h3 class="lead">Add member:</h3>
   <form action="{% url 'event:save_member' event.id %}" method="post">
