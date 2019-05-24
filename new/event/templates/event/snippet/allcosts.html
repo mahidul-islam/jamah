@@ -3,28 +3,23 @@
     {% for cost in costs %}
       <li class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
         <span>
-          <a href="{% url 'event:cost_detail' cost.event.id cost.id %}">
-            {{cost.name}}
-          </a>
+          <mark>{{cost.name}}</mark>
+          --
           {{cost.amount}}
           <i class="fas fa-lira-sign"></i>
           <small>
-            Created by --
+            Added by --
             <a href="{% url 'profile:user_profile' event.creator.id %}">
-              {{ event.creator.username|upper }}
+              {{ cost.added_by.member.username|upper }}
             </a>
+            at {{cost.timestamp}}
           </small>
         </span>
         <span>
-          <span class="badge badge-primary badge-pill"> {{cost.cost_bearer.count}} bearer</span>
-          {% if not cost.has_extracted_money %}
-            <a class="btn btn-info" href="{% url 'event:cost_donate' cost.id %}">Donate.</a>
-            <a class="btn btn-secondary" href="{% url 'event:cost_pay' cost.id %}">P:{{cost.per_head_cost}}</a>
-          {% endif %}
           {% if eventmember.is_responsible %}
             <a class="btn btn-warning" href="#">Object?</a>
           {% endif %}
-          {% if user == event.creator %}
+          {% if user == event.creator or user.is_staff %}
             <a class="btn btn-danger" href="#">Delete?</a>
           {% endif %}
         </span>

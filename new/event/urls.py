@@ -13,7 +13,6 @@ urlpatterns = [
     path('<int:event_id>/<int:member_id>/remove_member', views.remove_member, name = 'remove_member'),
     path('<int:event_id>/pay', views.pay, name = 'pay'),
     path('<int:event_id>/donate', views.donate, name = 'donate'),
-    path('<int:event_id>/cost_pay', views.pay, name = 'cost_pay'),
-    path('<int:event_id>/cost_donate', views.donate, name = 'cost_donate'),
-    path('<int:event_id>/cost/<int:cost_id>', views.cost_detail, name='cost_detail')
+    # TODO: add event financial state instead
+    # path('<int:event_id>/cost/<int:cost_id>', views.cost_detail, name='cost_detail')
 ]

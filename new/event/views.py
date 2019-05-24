@@ -64,40 +64,12 @@ def detail(request, event_id):
     }
     return HttpResponse(template.render(context, request))
 
-def cost_detail(request, event_id, cost_id):
-    cost = Cost.objects.get(pk = cost_id)
-    event = cost.event
-    eventmember = EventMember.objects.get(event=event, member=request.user)
-    template = loader.get_template('event/cost_detail.html')
-    cost_transaction_ins = cost.cost_transaction_ins.all()
-    recieved = 0
-    donation = 0
-    for transaction in cost_transaction_ins:
-        if transaction.is_donation:
-            donation += transaction.amount
-        recieved += transaction.amount
-    context = {
-        'cost_transaction_ins': cost_transaction_ins,
-        'donation': donation,
-        'recieved': recieved,
-        'current_eventmember': eventmember,
-        'cost': cost
-    }
-    print(eventmember)
-    return HttpResponse(template.render(context, request))
-
 def create_event_cost(request, event_id):
     event = Event.objects.get(pk = event_id)
     name = request.POST['name']
     amount = request.POST['amount']
-    eventmember = EventMember.objects.filter(event=event).filter(member=request.user)[:1]
-    eventmembers = event.eventmember_set.all()
-    # print(type(amount))
-    per_head_cost = math.ceil(float(amount)/eventmembers.count())
-    cost = Cost(amount=amount, name=name, added_by=eventmember[0], per_head_cost=per_head_cost, event=event)
-    cost.save()
-    for event_member in eventmembers:
-        cost.cost_bearer.add(event_member)
+    eventmember = EventMember.objects.get(event=event, member=request.user)
+    cost = Cost(amount=amount, name=name, added_by=eventmember, event=event)
     cost.save()
     return HttpResponseRedirect(reverse('event:detail', args = (event_id,)))
 

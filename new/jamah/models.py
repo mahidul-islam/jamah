@@ -36,6 +36,7 @@ class JamahMember(models.Model):
     still_to_be_excepted = models.BooleanField(default = True)
     is_responsible = models.BooleanField(default=False)
     account = models.OneToOneField(Account, on_delete = models.CASCADE)
+    is_accountant = models.BooleanField(default=False)
 
     def __str__(self):
         return ('{} --- \"{}\"').format(self.member.username, self.jamah.jamahname)

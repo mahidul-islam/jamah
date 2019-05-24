@@ -20,6 +20,8 @@ class Event(models.Model):
     resposible_member_count = models.IntegerField(default=1)
     modarator_member_count = models.IntegerField(default=0)
     admin_member_count = models.IntegerField(default=0)
+    per_head_cost = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    event_finished = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
@@ -39,6 +41,7 @@ class EventMember(models.Model):
     timestamp = models.DateTimeField(default = timezone.now, editable=False)
     is_responsible = models.BooleanField(default=False)
     account = models.OneToOneField(Account, on_delete = models.CASCADE)
+    is_accountant = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
         if not self.status=='member':
@@ -51,16 +54,12 @@ class EventMember(models.Model):
 class Cost(models.Model):
     uid = models.UUIDField(default=uuid.uuid4, editable=False)
     timestamp = models.DateTimeField(default = timezone.now, editable=False)
-    has_extracted_money = models.BooleanField(default = False)
     objected_by = models.ManyToManyField(EventMember, related_name='approved_costs', blank=True)
-    cost_bearer = models.ManyToManyField(EventMember, blank=True)
-    per_head_cost = models.DecimalField(max_digits = 10, decimal_places = 2)
     is_objected = models.BooleanField(default = False)
     added_by = models.ForeignKey(EventMember, on_delete=models.CASCADE, related_name='created_costs')
     amount = models.DecimalField(max_digits = 10, decimal_places = 2)
     name = models.CharField(max_length=255)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
-    donation_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
     def save(self, *args, **kwargs):
         if self.id:

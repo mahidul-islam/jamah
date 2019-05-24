@@ -33,12 +33,6 @@
 {% include 'event/snippet/allcostbearer.html' with cost=cost %}
 <br>
 
-<br>
-<h3 class="lead">All Transactions:</h3>
-<br>
-{% include 'event/snippet/alltransactions.html' with transaction=cost_transaction_ins %}
-<br>
-
 {% if user.is_staff or user == current_eventmember.is_responsible %}
 
   <br>
