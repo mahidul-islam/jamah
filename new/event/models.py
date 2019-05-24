@@ -3,24 +3,23 @@ from django.conf import settings
 from django.utils import timezone
 from blog.models import Blog
 from jamah.models import Jamah
+from account.models import Account
 import uuid
 import math
 
 
-class Account(models.Model):
-    uid = models.UUIDField( default=uuid.uuid4, editable=False)
-    amount = models.DecimalField(max_digits = 10, decimal_places = 2, default = 0)
-
 class Event(models.Model):
-    uid = models.UUIDField( default=uuid.uuid4, editable=False)
+    uid = models.UUIDField(default=uuid.uuid4, editable=False)
     name = models.CharField(max_length = 200)
-    date = models.DateTimeField(default = timezone.now)
+    date = models.DateTimeField(default = timezone.now, editable=False)
     creator = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete = models.CASCADE, related_name = 'created_events')
     members = models.ManyToManyField(settings.AUTH_USER_MODEL, blank = True)
     account = models.OneToOneField(Account, on_delete = models.CASCADE)
     is_donation_only_event = models.BooleanField(default = False)
-    # official_blog = models.OneToOneField(Blog, on_delete=models.CASCADE, blank=True, null=True)
     jamah = models.ForeignKey(Jamah, on_delete=models.CASCADE, related_name = 'events')
+    resposible_member_count = models.IntegerField(default=1)
+    modarator_member_count = models.IntegerField(default=0)
+    admin_member_count = models.IntegerField(default=0)
 
     def __str__(self):
         return self.name
@@ -39,6 +38,7 @@ class EventMember(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     timestamp = models.DateTimeField(default = timezone.now, editable=False)
     is_responsible = models.BooleanField(default=False)
+    account = models.OneToOneField(Account, on_delete = models.CASCADE, blank=True, null=True)
 
     def save(self, *args, **kwargs):
         if not self.status=='member':
@@ -67,19 +67,3 @@ class Cost(models.Model):
             if self.objected_by.count():
                 self.is_objected = True
         super(Cost, self).save(*args, **kwargs)
-
-class TransactionIn(models.Model):
-    uid = models.UUIDField( default=uuid.uuid4, editable=False)
-    amount = models.DecimalField(max_digits = 10, decimal_places = 2)
-    comes_from = models.ForeignKey(EventMember, on_delete = models.CASCADE)
-    account = models.ForeignKey(Account, on_delete = models.CASCADE)
-    timestamp = models.DateTimeField(default=timezone.now, editable=False)
-    is_donation = models.BooleanField(default=False)
-    part_of_cost = models.ForeignKey(Cost, on_delete=models.CASCADE, related_name='cost_transaction_ins')
-
-class TransactionOut(models.Model):
-    uid = models.UUIDField( default=uuid.uuid4, editable=False)
-    amount = models.DecimalField(max_digits = 10, decimal_places = 2)
-    goes_to = models.ForeignKey(EventMember, on_delete = models.CASCADE)
-    account = models.ForeignKey(Account, on_delete = models.CASCADE)
-    timestamp = models.DateTimeField(default=timezone.now, editable=False)

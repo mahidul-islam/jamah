@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'user',
     'userProfile',
     'jamah',
+    'account',
     'blog',
     'crispy_forms',
     'rules',

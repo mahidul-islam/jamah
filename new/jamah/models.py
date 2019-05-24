@@ -2,6 +2,7 @@ import uuid
 from django.db import models
 from django.conf import settings
 from django.utils import timezone
+from account.models import Account
 
 
 class Jamah(models.Model):
@@ -11,6 +12,10 @@ class Jamah(models.Model):
     members = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='members')
     timestamp = models.DateTimeField(default = timezone.now, editable=False)
     requested_to_join = models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True, related_name='requested_jamah')
+    resposible_member_count = models.IntegerField(default=1)
+    modarator_member_count = models.IntegerField(default=0)
+    admin_member_count = models.IntegerField(default=0)
+    account = models.OneToOneField(Account, on_delete = models.CASCADE, blank=True, null=True)
 
     def __str__(self):
         return self.jamahname
@@ -30,6 +35,7 @@ class JamahMember(models.Model):
     timestamp = models.DateTimeField(default = timezone.now, editable=False)
     still_to_be_excepted = models.BooleanField(default = True)
     is_responsible = models.BooleanField(default=False)
+    account = models.OneToOneField(Account, on_delete = models.CASCADE, blank=True, null=True)
 
     def __str__(self):
         return self.member.username

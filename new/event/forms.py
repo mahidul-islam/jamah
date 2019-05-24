@@ -7,8 +7,5 @@ class CostCreateForm(forms.Form):
     amount = forms.DecimalField(max_digits=10, decimal_places=2)
     name = forms.CharField(max_length=255)
 
-class TransactionInForm(forms.Form):
-    pass
-
 class UserAddForm(forms.Form):
     choice = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple)

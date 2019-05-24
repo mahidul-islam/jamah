@@ -4,8 +4,9 @@ from django.contrib import messages
 from django.urls import reverse
 from django.template import loader
 from django.http import HttpResponse, HttpResponseRedirect
-from .models import Event, Account, EventMember, Cost
+from .models import Event, EventMember, Cost
 from user.models import MyUser
+from account.models import Account
 from polls.models import Question
 from jamah.models import JamahMember, Jamah
 from polls.forms import QuestionCreateForm
@@ -48,7 +49,7 @@ def detail(request, event_id):
     pollform = QuestionCreateForm()
     costform = CostCreateForm()
     userform = UserAddForm()
-    # todo use form for this
+    # todo use forms.py for this
     # userform.fields['choice'].choices = users_to_add
     context = {
         'costs': costs,

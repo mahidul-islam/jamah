@@ -1,14 +1,15 @@
 from django.shortcuts import render
 from django.template import loader
 from django.http import HttpResponse, HttpResponseRedirect
-from .models import Jamah, JamahMember
 from django.urls import reverse
-from user.models import MyUser
+from django.utils import timezone
 from django.contrib import messages
 from .forms import JamahCreateForm
 from event.forms import EventCreateForm
-from django.utils import timezone
-from event.models import Event, Account, EventMember
+from .models import Jamah, JamahMember
+from user.models import MyUser
+from event.models import Event, EventMember
+from account.models import Account
 
 
 def index(request):
@@ -107,6 +108,7 @@ def create_jamah_event(request, jamah_id):
     messages.success(request, 'Added a Event for the jamah...')
     account = Account()
     account.save()
+    print(account)
     event = Event(name = name, creator = request.user, account = account, jamah=jamah)
     event.save()
     event.members.add(request.user)
