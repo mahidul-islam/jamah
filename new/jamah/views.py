@@ -77,17 +77,29 @@ def join_jamah(request, jamah_id):
         # user didnot requested before so create jamahMember
         jamah.requested_to_join.add(request.user)
         jamah.save()
-        jamahMember = JamahMember(member=request.user, jamah=jamah, status='member').save()
+        account = Account()
+        account.save()
+        jamahMember = JamahMember(member=request.user, jamah=jamah, status='member', account=account).save()
         messages.success(request, 'You requested to join the Group')
         return HttpResponseRedirect(reverse('jamah:all_jamah'))
 
 def create(request):
     name = request.POST['jamahname']
-    jamah = Jamah(jamahname = name, creator = request.user)
+    account = Account()
+    account.save()
+    jamah = Jamah(jamahname = name, creator = request.user, account=account)
     jamah.save()
     jamah.members.add(request.user)
     jamah.save()
-    jamahMember = JamahMember(member=request.user, jamah=jamah, status='creator', still_to_be_excepted=False).save()
+    account2 = Account()
+    account2.save()
+    jamahMember = JamahMember(
+        member = request.user,
+        jamah = jamah,
+        status = 'creator',
+        still_to_be_excepted = False,
+        account = account2
+    ).save()
     # print(jamahMember)
     return HttpResponseRedirect(reverse('jamah:all_jamah'))
 
@@ -108,10 +120,11 @@ def create_jamah_event(request, jamah_id):
     messages.success(request, 'Added a Event for the jamah...')
     account = Account()
     account.save()
-    print(account)
     event = Event(name = name, creator = request.user, account = account, jamah=jamah)
     event.save()
     event.members.add(request.user)
     event.save()
-    eventMember = EventMember(member=request.user, event=event, status='creator').save()
+    account2 = Account()
+    account2.save()
+    eventMember = EventMember(member=request.user, event=event, status='creator', account=account2).save()
     return HttpResponseRedirect(reverse('jamah:detail', args = (jamah_id,)))

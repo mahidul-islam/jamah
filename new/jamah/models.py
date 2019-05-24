@@ -15,7 +15,7 @@ class Jamah(models.Model):
     resposible_member_count = models.IntegerField(default=1)
     modarator_member_count = models.IntegerField(default=0)
     admin_member_count = models.IntegerField(default=0)
-    account = models.OneToOneField(Account, on_delete = models.CASCADE, blank=True, null=True)
+    account = models.OneToOneField(Account, on_delete = models.CASCADE)
 
     def __str__(self):
         return self.jamahname
@@ -35,10 +35,10 @@ class JamahMember(models.Model):
     timestamp = models.DateTimeField(default = timezone.now, editable=False)
     still_to_be_excepted = models.BooleanField(default = True)
     is_responsible = models.BooleanField(default=False)
-    account = models.OneToOneField(Account, on_delete = models.CASCADE, blank=True, null=True)
+    account = models.OneToOneField(Account, on_delete = models.CASCADE)
 
     def __str__(self):
-        return self.member.username
+        return ('{} --- \"{}\"').format(self.member.username, self.jamah.jamahname)
 
 def save(self, *args, **kwargs):
     if not self.status=='member':

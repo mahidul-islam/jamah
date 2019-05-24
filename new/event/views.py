@@ -43,7 +43,7 @@ def detail(request, event_id):
     eventmembers = EventMember.objects.filter(event=event)
 
     current_eventmember = EventMember.objects.get(event=event, member=request.user)
-    print(current_eventmember)
+    # print(current_eventmember)
     polls = event.polls.all()
     costs = event.cost_set.all()
     pollform = QuestionCreateForm()
@@ -112,7 +112,9 @@ def save_member(request, event_id):
         # check if member is already in the event
         if not eventmember.count():
             event.members.add(user)
-            eventMember = EventMember(member=user, event=event).save()
+            account = Account()
+            account.save()
+            eventMember = EventMember(member=user, event=event, account=account).save()
         else:
             messages.warning(request, 'The member is already in the event')
     event.save()
@@ -122,6 +124,7 @@ def remove_member(request, event_id, member_id):
     event = Event.objects.get(pk = event_id)
     member = MyUser.objects.get(pk = member_id)
     eventmember = EventMember.objects.get(event=event, member=member)
+    eventmember.account.delete()
     eventmember.delete()
     event.members.remove(member)
     event.save()

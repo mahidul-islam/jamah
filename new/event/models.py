@@ -38,7 +38,7 @@ class EventMember(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     timestamp = models.DateTimeField(default = timezone.now, editable=False)
     is_responsible = models.BooleanField(default=False)
-    account = models.OneToOneField(Account, on_delete = models.CASCADE, blank=True, null=True)
+    account = models.OneToOneField(Account, on_delete = models.CASCADE)
 
     def save(self, *args, **kwargs):
         if not self.status=='member':
@@ -46,7 +46,7 @@ class EventMember(models.Model):
         super(EventMember, self).save(*args, **kwargs)
 
     def __str__(self):
-        return self.member.username
+        return ('{} --- \"{}\"').format(self.member.username, self.event.name)
 
 class Cost(models.Model):
     uid = models.UUIDField(default=uuid.uuid4, editable=False)

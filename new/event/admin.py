@@ -18,3 +18,5 @@ class EventAdmin(admin.ModelAdmin):
     inlines = [PollsInline, EventMemberInline, CostInline]
 
 admin.site.register(Event, EventAdmin)
+admin.site.register(EventMember)
+admin.site.register(Cost)
