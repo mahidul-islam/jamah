@@ -13,7 +13,7 @@ class Event(models.Model):
     name = models.CharField(max_length = 200)
     date = models.DateTimeField(default = timezone.now, editable=False)
     creator = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete = models.CASCADE, related_name = 'created_events')
-    members = models.ManyToManyField(settings.AUTH_USER_MODEL, blank = True)
+    members = models.ManyToManyField(settings.AUTH_USER_MODEL)
     account = models.OneToOneField(Account, on_delete = models.CASCADE)
     is_donation_only_event = models.BooleanField(default = False)
     jamah = models.ForeignKey(Jamah, on_delete=models.CASCADE, related_name = 'events')
@@ -21,7 +21,13 @@ class Event(models.Model):
     modarator_member_count = models.IntegerField(default=0)
     admin_member_count = models.IntegerField(default=0)
     per_head_cost = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    total_cost = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     event_finished = models.BooleanField(default=False)
+
+    def save(self, *args, **kwargs):
+        if self.id:
+            self.per_head_cost = math.ceil(self.total_cost/self.members.count())
+        super(Event, self).save(*args, **kwargs)
 
     def __str__(self):
         return self.name

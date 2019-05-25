@@ -13,14 +13,26 @@
 </h3>
 <hr>
 <br>
-<h3>Event:"<mark>{{event.name}}</mark>"
-  <small>
-    Created by --
-    <a href="{% url 'profile:user_profile' event.creator.id %}">
-      "{{event.creator.username|upper}}"
-    </a>
-  </small>
-</h3>
+<div class="row d-flex justify-content-between">
+  <div class="col-10">
+    <h3>Event:"<mark>{{event.name}}</mark>"
+      <small>
+        Created by --
+        <a href="{% url 'profile:user_profile' event.creator.id %}">
+          "{{event.creator.username|upper}}"
+        </a>
+      </small>
+    </h3>
+  </div>
+  <div class="col-2">
+    <a class="btn btn-danger">Finish Event</a>
+  </div>
+</div>
+<br>
+<br>
+<p class="display-4 text-center"><small>Total COST:</small> <mark>{{event.total_cost}}</mark></p>
+<br>
+<p class="display-4 text-center"><small>Per Head COST:</small> <mark>{{event.per_head_cost}}</mark></p>
 <br>
 <h3 class="lead">Existing members:</h3>
 {% include 'event/snippet/alleventmember.html' with event=event %}
@@ -41,7 +53,7 @@
 
   <br><br>
   <mark>Create a cost for this event</mark>
-  <form action="{% url 'event:create_event_cost' event.id %}" method="post">
+  <form action="{% url 'event:create_cost' event.id %}" method="post">
     {% csrf_token %}
     {{costform.name|as_crispy_field}}
     {{costform.amount|as_crispy_field}}

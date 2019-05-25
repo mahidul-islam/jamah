@@ -2,13 +2,10 @@
 
 {% block base %}
 
-<div class="container">
   {% block navbar %}
     {% include 'new/navbar.html' %}
   {% endblock navbar %}
-</div>
 
-<div class="container">
   {% if messages %}
   <br>
   {% for message in messages %}
@@ -21,17 +18,14 @@
   {% endfor %}
   <br>
   {% endif %}
-</div>
 
 <div class="container">
   {% block content %}
   {% endblock %}
 </div>
 
-<div class="container">
   {% block footer %}
     {% include 'new/footer.html' %}
   {% endblock footer %}
-</div>
 
 {% endblock base %}

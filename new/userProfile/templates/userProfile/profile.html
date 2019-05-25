@@ -5,16 +5,16 @@
 
 <div class="container">
   <br>
-  <h3 class="text-center" >{{user|upper}}
-    <small class="text-center lead">- Joined {{ user.date_joined|timesince }} ago</small>
+  <h3 class="text-center" >{{profile.username|upper}}
+    <small class="text-center lead">- Joined {{ profile.date_joined|timesince }} ago</small>
   </h3>
   <hr>
   <br>
-  <h3 class="lead">All Jamah made by {{user|upper}}:</h3>
+  <h3 class="lead">All Jamah made by {{profile.username|upper}}:</h3>
   {% include 'jamah/snippet/alljamah.html' with jamahs=jamahs %}
   <br>
   <br>
-  <h3 class="lead">Polls {{user|upper}} Created:</h3>
+  <h3 class="lead">Polls {{profile.username|upper}} Created:</h3>
   {% include 'polls/snippet/allpolls.html' %}
   <br>
 </div>

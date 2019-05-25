@@ -10,6 +10,7 @@ from account.models import Account
 from polls.models import Question
 from jamah.models import JamahMember, Jamah
 from polls.forms import QuestionCreateForm
+from account.forms import TransactionForm
 from .forms import EventCreateForm, CostCreateForm, UserAddForm
 
 
@@ -41,36 +42,49 @@ def detail(request, event_id):
 
     template = loader.get_template('event/detail.html')
     eventmembers = EventMember.objects.filter(event=event)
+    try:
+        current_eventmember = EventMember.objects.get(event=event, member=request.user)
+    except:
+        messages.info(request, 'You are not a member of the event')
+        return HttpResponseRedirect(reverse('jamah:detail', args = (event.jamah.id,)))
+    else:
+        polls = event.polls.all()
+        costs = event.cost_set.all()
+        pollform = QuestionCreateForm()
+        costform = CostCreateForm()
+        userform = UserAddForm()
+        # todo use forms.py for this
+        # userform.fields['choice'].choices = users_to_add
+        context = {
+            'costs': costs,
+            # 'userform': userform,
+            'current_eventmember': current_eventmember,
+            'eventmembers': eventmembers,
+            'pollForm': pollform,
+            'costform': costform,
+            'polls': polls,
+            'event': event,
+            'users': users_to_add,
+        }
+        return HttpResponse(template.render(context, request))
 
-    current_eventmember = EventMember.objects.get(event=event, member=request.user)
-    # print(current_eventmember)
-    polls = event.polls.all()
-    costs = event.cost_set.all()
-    pollform = QuestionCreateForm()
-    costform = CostCreateForm()
-    userform = UserAddForm()
-    # todo use forms.py for this
-    # userform.fields['choice'].choices = users_to_add
-    context = {
-        'costs': costs,
-        # 'userform': userform,
-        'current_eventmember': current_eventmember,
-        'eventmembers': eventmembers,
-        'pollForm': pollform,
-        'costform': costform,
-        'polls': polls,
-        'event': event,
-        'users': users_to_add,
-    }
-    return HttpResponse(template.render(context, request))
-
-def create_event_cost(request, event_id):
+def create_cost(request, event_id):
     event = Event.objects.get(pk = event_id)
     name = request.POST['name']
     amount = request.POST['amount']
     eventmember = EventMember.objects.get(event=event, member=request.user)
     cost = Cost(amount=amount, name=name, added_by=eventmember, event=event)
     cost.save()
+    event.total_cost = float(event.total_cost) + float(cost.amount)
+    event.save()
+    return HttpResponseRedirect(reverse('event:detail', args = (event_id,)))
+
+def delete_cost(request, event_id, cost_id):
+    event = Event.objects.get(pk = event_id)
+    cost = Cost.objects.get(pk = cost_id)
+    event.total_cost = float(event.total_cost) - float(cost.amount)
+    cost.delete()
+    event.save()
     return HttpResponseRedirect(reverse('event:detail', args = (event_id,)))
 
 def save_member(request, event_id):
@@ -86,6 +100,7 @@ def save_member(request, event_id):
             event.members.add(user)
             account = Account()
             account.save()
+            event.per_head_cost = (float(event.total_cost)/event.members.count())
             eventMember = EventMember(member=user, event=event, account=account).save()
         else:
             messages.warning(request, 'The member is already in the event')
@@ -118,4 +133,14 @@ def donate(request, event_id):
 def pay(request, event_id):
     template = loader.get_template('event/pay.html')
     context = {}
+    return HttpResponse(template.render(context, request))
+
+def make_transaction(request, event_id):
+    event = Event.objects.get(pk = event_id)
+    transaction_form = TransactionForm()
+    context = {
+        'event': event,
+        'transaction_form': transaction_form
+    }
+    template = loader.get_template('event/transaction.html')
     return HttpResponse(template.render(context, request))

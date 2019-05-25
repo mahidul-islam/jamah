@@ -29,8 +29,9 @@
 <br>
 <h3 class="lead" >Events:</h3>
 {% include 'event/snippet/allevent.html' with events=events %}
+<br><br>
 {% if user.is_staff or user == jamah.creator %}
-  <br><br>
+  <br>
   <h3 class="lead">Accept Member:</h3>
   {% include 'jamah/snippet/allrequests.html' with jamah=jamah %}
   <br>

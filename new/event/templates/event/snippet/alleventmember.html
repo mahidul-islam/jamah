@@ -11,7 +11,7 @@
         <span class="badge badge-primary badge-pill">{{eventmember.status}}</span>
         {% if user.is_admin or user == event.creator %}
           {% if eventmember.member != event.creator %}
-            <a class="btn btn-danger" href="{% url 'event:remove_member' event.id eventmember.member.id %}">remove?</a>
+            <a class="btn btn-outline-danger" href="{% url 'event:remove_member' event.id eventmember.member.id %}">remove?</a>
           {% endif %}
         {% endif %}
       </span>

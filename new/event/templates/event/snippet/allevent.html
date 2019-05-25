@@ -15,10 +15,9 @@
         </span>
         <span>
           <span class="badge badge-primary badge-pill"> {{event.members.count}} member</span>
-          <a class="btn btn-info" href="{% url 'event:donate' event.id %}">Donate.</a>
-          <a class="btn btn-warning" href="{% url 'event:pay' event.id %}">Pay</a>
+          <a class="btn btn-outline-success" href="{% url 'event:make_transaction' event.id %}">Send Money</a>
           {% if user.is_admin or user == event.creator %}
-            <a class="btn btn-danger" href="#">Archive?</a>
+            <a class="btn btn-outline-danger" href="#">Archive?</a>
           {% endif %}
         </span>
       </li>

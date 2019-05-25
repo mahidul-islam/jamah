@@ -1,0 +1,25 @@
+{% extends 'new/base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<br>
+<h3 class="text-center">
+  <mark>Send Money</mark>
+  <small>
+    to the event:
+    <a href="{% url 'event:detail' event.id %}">{{event.name}}</a>
+  </small>
+</h3>
+<hr>
+<br>
+<h3 class="lead"><mark>Create a transaction:</mark></h3>
+<br>
+<form action="#" method="post">
+  {% csrf_token %}
+  {{transaction_form|crispy}}
+  <input class="btn btn-primary" type="submit" value="Send Money!!!">
+</form>
+<br>
+<br>
+
+{% endblock %}
