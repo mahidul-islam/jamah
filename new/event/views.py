@@ -53,11 +53,14 @@ def detail(request, event_id):
         pollform = QuestionCreateForm()
         costform = CostCreateForm()
         userform = UserAddForm()
+        transaction_form = TransactionForm()
+        transactions = event.account.transaction_ins.all()
         # todo use forms.py for this
         # userform.fields['choice'].choices = users_to_add
         context = {
             'costs': costs,
-            # 'userform': userform,
+            'transactions': transactions,
+            'transaction_form': transaction_form,
             'current_eventmember': current_eventmember,
             'eventmembers': eventmembers,
             'pollForm': pollform,
@@ -118,6 +121,32 @@ def remove_member(request, event_id, member_id):
     # print(event.members.all())
     return HttpResponseRedirect(reverse('event:detail', args = (event_id,)))
 
+def promote_member(request, event_id, member_id):
+    event = Event.objects.get(pk = event_id)
+    member = MyUser.objects.get(pk = member_id)
+    eventmember = EventMember.objects.get(event=event, member=member)
+    if eventmember.status == 'member':
+        eventmember.status = 'admin'
+    elif eventmember.status == 'admin':
+        eventmember.status = 'modarator'
+    eventmember.save()
+    # print(event.members.all())
+    messages.success(request, 'You have Promoted a member !!!')
+    return HttpResponseRedirect(reverse('event:detail', args = (event_id,)))
+
+def demote_member(request, event_id, member_id):
+    event = Event.objects.get(pk = event_id)
+    member = MyUser.objects.get(pk = member_id)
+    eventmember = EventMember.objects.get(event=event, member=member)
+    if eventmember.status == 'modarator':
+        eventmember.status = 'admin'
+    elif eventmember.status == 'admin':
+        eventmember.status = 'member'
+    eventmember.save()
+    # print(event.members.all())
+    messages.success(request, 'You have Demoted a member !!!')
+    return HttpResponseRedirect(reverse('event:detail', args = (event_id,)))
+
 def create_event_poll(request, event_id):
     event = Event.objects.get(pk = event_id)
     question_text = request.POST['question_text']
@@ -144,3 +173,7 @@ def make_transaction(request, event_id):
     }
     template = loader.get_template('event/transaction.html')
     return HttpResponse(template.render(context, request))
+
+def transact(request, event_id):
+    messages.success(request, "This is where the transaction will be complete...")
+    return HttpResponseRedirect(reverse('event:detail', args = (event_id,)))

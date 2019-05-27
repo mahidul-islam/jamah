@@ -16,11 +16,11 @@
           </small>
         </span>
         <span>
-          {% if eventmember.is_responsible %}
-            <a class="btn btn-warning" href="#">Object?</a>
+          {% if eventmember.is_responsible or user.is_staff %}
+            <a class="btn btn-outline-warning" href="#">Object?</a>
           {% endif %}
           {% if user == event.creator or user.is_staff %}
-            <a class="btn btn-danger" href="#">Delete?</a>
+            <a class="btn btn-outline-danger" href="#">Delete?</a>
           {% endif %}
         </span>
       </li>

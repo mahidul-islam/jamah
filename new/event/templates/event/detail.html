@@ -36,7 +36,42 @@
 <br>
 <h3 class="lead">Existing members:</h3>
 {% include 'event/snippet/alleventmember.html' with event=event %}
-<br><br>
+<br>
+
+{% if user.is_staff or user == event.creator or current_eventmember.status == 'modarator' %}
+
+  <br><br>
+  <mark>Create a cost for this event</mark>
+  <form action="{% url 'event:create_cost' event.id %}" method="post">
+    {% csrf_token %}
+    {{costform.name|as_crispy_field}}
+    {{costform.amount|as_crispy_field}}
+    <input class="btn btn-primary" type="submit" name="" value=" Create Cost !!! ">
+  </form>
+  <br>
+
+{% endif %}
+
+  <br>
+  <h3 class="lead" >Costs:</h3>
+  {% include 'event/snippet/allcosts.html' with eventmember=current_eventmember costs=costs %}
+
+  <br><br>
+  <mark>Send Money for this event:</mark>
+  <br><br>
+  <form action="{% url 'event:transact' event.id %}" method="post">
+    {% csrf_token %}
+    {{transaction_form.is_donation|as_crispy_field}}
+    {{transaction_form.amount|as_crispy_field}}
+    <input class="btn btn-primary" type="submit" name="" value=" Send Money !!! ">
+  </form>
+  <br>
+  <br>
+
+  <h3 class="lead" >Money Recieved:</h3>
+  {% include 'event/snippet/allrecievedmoney.html' with eventmember=current_eventmember transactions=transactions %}
+
+<br>
 <mark>Launch a poll for this event</mark>
 <form action="{% url 'event:create_event_poll' event.id %}" method="post">
   {% csrf_token %}
@@ -48,24 +83,11 @@
 <h3 class="lead" >Polls:</h3>
 
 {% include 'polls/snippet/allpolls.html' with polls=polls %}
+<br>
+<br>
 
-{% if user.is_staff or user == current_eventmember.is_responsible %}
+{% if user.is_staff or user == event.creator %}
 
-  <br><br>
-  <mark>Create a cost for this event</mark>
-  <form action="{% url 'event:create_cost' event.id %}" method="post">
-    {% csrf_token %}
-    {{costform.name|as_crispy_field}}
-    {{costform.amount|as_crispy_field}}
-    <input class="btn btn-primary" type="submit" name="" value=" Create Cost !!! ">
-  </form>
-  <br>
-  <br>
-  <h3 class="lead" >Costs:</h3>
-
-  {% include 'event/snippet/allcosts.html' with eventmember=current_eventmember costs=costs %}
-
-  <br><br>
   <h3 class="lead">Add member:</h3>
   <form action="{% url 'event:save_member' event.id %}" method="post">
     {% csrf_token %}

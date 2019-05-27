@@ -1,0 +1,34 @@
+{% if transactions.count %}
+  <ul class="list-group">
+    {% for transaction in transactions %}
+      <li class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+        <span>
+          <mark>
+            {{transaction.amount}}
+            <i class="fas fa-lira-sign"></i>
+          </mark>
+          <small>
+            Recieved from --
+            <a href="{% url 'profile:user_profile' transaction.comes_from.member.id %}">
+              {{ transaction.comes_from.member.username|upper }}
+            </a>
+            at {{transaction.timestamp}}
+          </small>
+        </span>
+        <span>
+          {% if transaction.verified_by %}
+            <small>Verified by --</small>
+            <a href="{% url 'profile:user_profile' transaction.verified_by.id %}">
+              {{ transaction.verified_by.username|upper }}
+            </a>
+          {% elif eventmember.is_responsible or user.is_staff %}
+            <a class="btn btn-outline-danger" href="#">Verify?</a>
+          {% endif %}
+        </span>
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <br>
+  <h3 class="lead"><mark>No Money Recieved yet !!!</mark></h3>
+{% endif %}

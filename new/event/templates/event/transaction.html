@@ -14,7 +14,7 @@
 <br>
 <h3 class="lead"><mark>Create a transaction:</mark></h3>
 <br>
-<form action="#" method="post">
+<form action="{% url 'event:transact' event.id %}" method="post">
   {% csrf_token %}
   {{transaction_form|crispy}}
   <input class="btn btn-primary" type="submit" value="Send Money!!!">

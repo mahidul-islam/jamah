@@ -114,6 +114,29 @@ def save_member(request, jamah_id, jamahmember_id):
     jamahmember.save()
     return HttpResponseRedirect(reverse('jamah:detail', args = (jamah_id,)))
 
+def remove_member(request, jamah_id, member_id):
+    jamah = Jamah.objects.get(pk = jamah_id)
+    member = MyUser.objects.get(pk = member_id)
+    jamahmember = JamahMember.objects.get(jamah=jamah, member=member)
+    jamahmember.account.delete()
+    jamahmember.delete()
+    jamah.members.remove(member)
+    # print(event.members.all())
+    return HttpResponseRedirect(reverse('event:detail', args = (event_id,)))
+
+def promote_member(request, jamah_id, member_id):
+    jamah = Jamah.objects.get(pk = jamah_id)
+    member = MyUser.objects.get(pk = member_id)
+    jamahmember = JamahMember.objects.get(jamah=jamah, member=member)
+    if jamahmember.status == 'member':
+        jamahmember.status = 'admin'
+    elif jamahmember.status == 'admin':
+        jamahmember.status = 'modarator'
+    jamahmember.save()
+    # print(event.members.all())
+    return HttpResponseRedirect(reverse('event:detail', args = (event_id,)))
+
+
 def create_jamah_event(request, jamah_id):
     jamah = Jamah.objects.get(pk = jamah_id)
     name = request.POST['name']
