@@ -16,3 +16,4 @@ class AccountAdmin(admin.ModelAdmin):
     inlines = [TransactionInInline, TransactionOutInline]
 
 admin.site.register(Account, AccountAdmin)
+admin.site.register(Transaction)

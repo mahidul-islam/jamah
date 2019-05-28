@@ -6,7 +6,7 @@ from django.template import loader
 from django.http import HttpResponse, HttpResponseRedirect
 from .models import Event, EventMember, Cost
 from user.models import MyUser
-from account.models import Account
+from account.models import Account, Transaction
 from polls.models import Question
 from jamah.models import JamahMember, Jamah
 from polls.forms import QuestionCreateForm
@@ -33,21 +33,22 @@ def index(request):
 
 def detail(request, event_id):
     event = Event.objects.get(pk = event_id)
-    left_jamah_members = JamahMember.objects.filter(jamah=event.jamah).exclude(
-        member__in = event.members.all()
-    )
-    users_to_add = []
-    for left in left_jamah_members:
-        users_to_add.append(left.member)
-
-    template = loader.get_template('event/detail.html')
-    eventmembers = EventMember.objects.filter(event=event)
     try:
         current_eventmember = EventMember.objects.get(event=event, member=request.user)
     except:
         messages.info(request, 'You are not a member of the event')
         return HttpResponseRedirect(reverse('jamah:detail', args = (event.jamah.id,)))
     else:
+        left_jamah_members = JamahMember.objects.filter(jamah=event.jamah).exclude(
+            member__in = event.members.all()
+        )
+        users_to_add = []
+        for left in left_jamah_members:
+            users_to_add.append(left.member)
+        candidate_accountants = EventMember.objects.filter(event=event).exclude(is_accountant=True)
+        # print(candidate_accountants)
+        template = loader.get_template('event/detail.html')
+        eventmembers = EventMember.objects.filter(event=event).order_by('-timestamp')
         polls = event.polls.all()
         costs = event.cost_set.all()
         pollform = QuestionCreateForm()
@@ -55,9 +56,15 @@ def detail(request, event_id):
         userform = UserAddForm()
         transaction_form = TransactionForm()
         transactions = event.account.transaction_ins.all()
+        donations = event.account.transaction_ins.filter(is_donation = True)
+        total_donation = 0
+        for donation in donations:
+            total_donation += donation.amount
         # todo use forms.py for this
         # userform.fields['choice'].choices = users_to_add
         context = {
+            'total_donation': total_donation,
+            'candidate_accountants': candidate_accountants,
             'costs': costs,
             'transactions': transactions,
             'transaction_form': transaction_form,
@@ -70,6 +77,28 @@ def detail(request, event_id):
             'users': users_to_add,
         }
         return HttpResponse(template.render(context, request))
+
+def finance(request, event_id):
+    event = Event.objects.get(pk = event_id)
+    current_eventmember = EventMember.objects.get(event=event, member=request.user)
+    costs = event.cost_set.all()
+    transactions = event.account.transaction_ins.filter(is_donation = False)
+    donations = event.account.transaction_ins.filter(is_donation = True)
+    total_donation = 0
+    for donation in donations:
+        total_donation += donation.amount
+    print(total_donation)
+    print(transactions)
+    context = {
+        'total_donation': total_donation,
+        'donations': donations,
+        'costs': costs,
+        'transactions': transactions,
+        'current_eventmember': current_eventmember,
+        'event': event,
+    }
+    template = loader.get_template('event/event_finance.html')
+    return HttpResponse(template.render(context, request))
 
 def create_cost(request, event_id):
     event = Event.objects.get(pk = event_id)
@@ -95,7 +124,7 @@ def save_member(request, event_id):
     values = request.POST.getlist('member')
     for value in values:
         user = MyUser.objects.get(pk = value)
-        eventmember = EventMember.objects.filter(member=user).filter(event=event)
+        eventmember = EventMember.objects.get(member=user, event=event)
         # print(eventmember)
         # print(user)
         # check if member is already in the event
@@ -127,24 +156,28 @@ def promote_member(request, event_id, member_id):
     eventmember = EventMember.objects.get(event=event, member=member)
     if eventmember.status == 'member':
         eventmember.status = 'admin'
+        messages.success(request, 'You have Promoted a member !!!')
     elif eventmember.status == 'admin':
         eventmember.status = 'modarator'
+        messages.success(request, 'You have Promoted a member !!!')
     eventmember.save()
     # print(event.members.all())
-    messages.success(request, 'You have Promoted a member !!!')
+    messages.warning(request, 'The member could not be promoted !!!')
     return HttpResponseRedirect(reverse('event:detail', args = (event_id,)))
 
 def demote_member(request, event_id, member_id):
     event = Event.objects.get(pk = event_id)
     member = MyUser.objects.get(pk = member_id)
     eventmember = EventMember.objects.get(event=event, member=member)
+    if eventmember.status == 'admin':
+        eventmember.status = 'member'
+        messages.success(request, 'You have Demoted a member !!!')
     if eventmember.status == 'modarator':
         eventmember.status = 'admin'
-    elif eventmember.status == 'admin':
-        eventmember.status = 'member'
+        messages.success(request, 'You have Demoted a member !!!')
     eventmember.save()
     # print(event.members.all())
-    messages.success(request, 'You have Demoted a member !!!')
+    messages.warning(request, 'The member could not be demoted !!!')
     return HttpResponseRedirect(reverse('event:detail', args = (event_id,)))
 
 def create_event_poll(request, event_id):
@@ -175,5 +208,31 @@ def make_transaction(request, event_id):
     return HttpResponse(template.render(context, request))
 
 def transact(request, event_id):
-    messages.success(request, "This is where the transaction will be complete...")
+    event = Event.objects.get(pk = event_id)
+    is_donation = request.POST.getlist('is_donation')
+    amount = request.POST['amount']
+    eventmember = EventMember.objects.get(member=request.user, event=event)
+    print(eventmember.account)
+    if len(is_donation):
+        transaction = Transaction(amount=amount, goes_to=event.account, comes_from=eventmember.account, is_donation=True)
+    else:
+        transaction = Transaction(amount=amount, goes_to=event.account, comes_from=eventmember.account)
+    event.account.amount = float(event.account.amount) + float(amount)
+    event.account.save()
+    eventmember.account.amount = float(eventmember.account.amount) + float(amount)
+    eventmember.account.save()
+    transaction.save()
+    messages.success(request, 'Added Money To the event with your name')
+    return HttpResponseRedirect(reverse('event:detail', args = (event_id,)))
+
+def add_accountants(request, event_id):
+    event = Event.objects.get(pk = event_id)
+    values = request.POST.getlist('member')
+    for value in values:
+        user = MyUser.objects.get(pk = value)
+        eventmember = EventMember.objects.get(member=user, event=event)
+        eventmember.is_accountant = True
+        eventmember.save()
+        print(eventmember)
+    event.save()
     return HttpResponseRedirect(reverse('event:detail', args = (event_id,)))

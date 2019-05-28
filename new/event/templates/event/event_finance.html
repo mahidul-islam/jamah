@@ -5,52 +5,35 @@
 
 <br>
 <h3 class="text-center">
-  Cost Details
+  Financial Details
   <small>
     of the event:
-    <a href="{% url 'event:detail' cost.event.id %}">{{cost.event.name}}</a>
+    <a href="{% url 'event:detail' event.id %}">{{event.name}}</a>
   </small>
 </h3>
 <hr>
 <br>
-<h3>Cost:"<mark>{{cost.name}}</mark>"
-  <small>
-    Created by --
-    <a href="{% url 'profile:user_profile' cost.added_by.id %}">
-      "{{cost.added_by.member.username|upper}}"
-    </a>
-  </small>
-</h3>
+<p class="h1 text-center"><small>Total COST:</small> <mark>{{event.total_cost}}</mark></p>
 <br>
-<p class="text-center h1"><small>Total COST:</small> <mark>{{cost.amount}}</mark></p>
-<p class="text-center h1"><small>Per head COST:</small> <mark>{{cost.per_head_cost}}</mark></p>
-<p class="text-center h1"><small>Total Recieved:</small> <mark>{{recieved}}</mark></p>
-<p class="text-center h1"><small>Total Donation:</small> <mark>{{donation}}</mark></p>
-
+<h3 class="lead">Costs of "<mark>{{event.name}}</mark>"</h3>
+  {% include 'event/snippet/allcosts.html' with eventmember=current_eventmember costs=costs %}
 <br>
-<h3 class="lead">Cost Bearers:</h3>
+<p class="text-center h1"><small>Total Recieved:</small> <mark>{{event.account.amount}}</mark></p>
 <br>
-{% include 'event/snippet/allcostbearer.html' with cost=cost %}
+<h3 class="lead">Money Recieved List of "<mark>{{event.name}}</mark>"</h3>
+  {% include 'event/snippet/allrecievedmoney.html' with eventmember=current_eventmember transactions=transactions %}
 <br>
-
-{% if user.is_staff or user == current_eventmember.is_responsible %}
-
-  <br>
-  <h3 class="lead">Delete Member:</h3>
-  <form action="#" method="post">
-    {% csrf_token %}
-    <ol class="list-group">
-      {% for eventmember in cost.cost_bearer.all %}
-        <li class="list-group-item">
-          <input type="checkbox" name="member" value="{{ eventmember.member.id }}">
-          <a href="{% url 'profile:user_profile' user.id %}">{{ eventmember.member.username }}</a>
-        </li>
-      {% endfor %}
-    </ol>
-    <br>
-    <input class="btn btn-danger" type="submit" value="Delete Member">
-  </form>
-  <br><br>
+{% if total_donation == 0 %}
+  <p class="text-center h1"><small>Total Donation:</small> <mark>{{total_donation}}.00</mark></p>
+{% else %}
+  <p class="text-center h1"><small>Total Donation:</small> <mark>{{total_donation}}</mark></p>
 {% endif %}
-
+<br>
+<h3 class="lead">Donation List of "<mark>{{event.name}}</mark>"</h3>
+  {% include 'event/snippet/allrecievedmoney.html' with eventmember=current_eventmember transactions=donations %}
+<br>
+<p class="text-center h1"><small>Total Member Count:</small> <mark>{{event.members.count}}</mark></p>
+<br>
+<p class="h1 text-center"><small>Per Head COST:</small> <mark>{{event.per_head_cost}}</mark></p>
+<br>
 {% endblock %}

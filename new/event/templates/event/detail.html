@@ -30,12 +30,17 @@
 </div>
 <br>
 <br>
-<p class="display-4 text-center"><small>Total COST:</small> <mark>{{event.total_cost}}</mark></p>
+<p class="h1 text-center"><small>Total COST:</small> <mark>{{event.total_cost}}</mark></p>
+<p class="h1 text-center"><small>Per Head COST:</small> <mark>{{event.per_head_cost}}</mark></p>
+<p class="h1 text-center"><small>Total Recieved Money:</small> <mark>{{event.account.amount}}</mark></p>
+<p class="h1 text-center"><small>Total Donation:</small> <mark>{{total_donation}}</mark></p>
 <br>
-<p class="display-4 text-center"><small>Per Head COST:</small> <mark>{{event.per_head_cost}}</mark></p>
+<a href='{%url 'event:finance' event.id%}' class="btn btn-info btn-block text-center btn-lg">
+  Check Out Financial State
+</a>
 <br>
 <h3 class="lead">Existing members:</h3>
-{% include 'event/snippet/alleventmember.html' with event=event %}
+  {% include 'event/snippet/alleventmember.html' with event=event %}
 <br>
 
 {% if user.is_staff or user == event.creator or current_eventmember.status == 'modarator' %}
@@ -86,23 +91,44 @@
 <br>
 <br>
 
-{% if user.is_staff or user == event.creator %}
+{% if users.count %}
+  {% if user.is_staff or user == event.creator %}
+    <h3 class="lead">Add member:</h3>
+    <form action="{% url 'event:save_member' event.id %}" method="post">
+      {% csrf_token %}
+      <ol class="list-group">
+        {% for user in users %}
+          <li class="list-group-item">
+            <input type="checkbox" name="member" value="{{ user.id }}">
+            <a href="{% url 'profile:user_profile' user.id %}">{{ user.username }}</a>
+          </li>
+        {% endfor %}
+      </ol>
+      <br>
+      <input class="btn btn-primary" type="submit" value="Add Member">
+    </form>
+    <br><br>
+  {% endif %}
+{% endif %}
 
-  <h3 class="lead">Add member:</h3>
-  <form action="{% url 'event:save_member' event.id %}" method="post">
-    {% csrf_token %}
-    <ol class="list-group">
-      {% for user in users %}
-        <li class="list-group-item">
-          <input type="checkbox" name="member" value="{{ user.id }}">
-          <a href="{% url 'profile:user_profile' user.id %}">{{ user.username }}</a>
-        </li>
-      {% endfor %}
-    </ol>
-    <br>
-    <input class="btn btn-primary" type="submit" value="Add Member">
-  </form>
-  <br><br>
+{% if candidate_accountants.count %}
+  {% if user.is_staff or user == event.creator %}
+    <h3 class="lead">Add accountat:</h3>
+    <form action="{% url 'event:add_accountants' event.id %}" method="post">
+      {% csrf_token %}
+      <ul class="list-group">
+        {% for candidate in candidate_accountants %}
+          <li class="list-group-item">
+            <input type="checkbox" name="member" value="{{ candidate.member.id }}">
+            <a href="{% url 'profile:user_profile' candidate.member.id %}">{{ candidate.member.username }}</a>
+          </li>
+        {% endfor %}
+      </ul>
+      <br>
+      <input class="btn btn-primary" type="submit" value="Add Accountant !!!">
+    </form>
+    <br><br>
+  {% endif %}
 {% endif %}
 
 {% endblock %}

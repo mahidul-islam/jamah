@@ -5,24 +5,30 @@
         <span>
           <mark>
             {{transaction.amount}}
-            <i class="fas fa-lira-sign"></i>
+            <i class="fas fa-money-bill-wave"></i>
           </mark>
           <small>
             Recieved from --
-            <a href="{% url 'profile:user_profile' transaction.comes_from.member.id %}">
-              {{ transaction.comes_from.member.username|upper }}
+            <a href="{% url 'profile:user_profile' transaction.comes_from.eventmember.member.id %}">
+              {{ transaction.comes_from.eventmember.member.username|upper }}
             </a>
             at {{transaction.timestamp}}
           </small>
         </span>
         <span>
+          {% if transaction.is_donation %}
+            <p class="badge badge-primary badge-pill">donation</p>
+          {% endif %}
           {% if transaction.verified_by %}
             <small>Verified by --</small>
             <a href="{% url 'profile:user_profile' transaction.verified_by.id %}">
               {{ transaction.verified_by.username|upper }}
             </a>
-          {% elif eventmember.is_responsible or user.is_staff %}
-            <a class="btn btn-outline-danger" href="#">Verify?</a>
+          {% elif eventmember.is_accountant or user.is_staff %}
+            <a class="btn btn-outline-success" href="#">Verify?</a>
+          {% endif %}
+          {% if transaction.comes_from.eventmember.member == request.user or user.is_staff %}
+            <a href="#" class="btn btn-outline-danger">Delete</a>
           {% endif %}
         </span>
       </li>

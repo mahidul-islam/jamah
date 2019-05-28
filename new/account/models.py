@@ -6,12 +6,13 @@ import uuid
 class Account(models.Model):
     uid = models.UUIDField(default=uuid.uuid4, editable=False)
     amount = models.DecimalField(max_digits = 10, decimal_places = 2, default = 0)
+    mother_account = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True, related_name='member_accounts')
 
 class Transaction(models.Model):
     uid = models.UUIDField(default=uuid.uuid4, editable=False)
     is_donation = models.BooleanField(default=False)
     amount = models.DecimalField(max_digits = 10, decimal_places = 2)
-    comes_from = models.ForeignKey(Account, on_delete = models.CASCADE, related_name='transaction_outs')
+    comes_from = models.ForeignKey(Account, on_delete = models.CASCADE, related_name='transaction_outs', null=True, blank=True)
     goes_to = models.ForeignKey(Account, on_delete = models.CASCADE, related_name='transaction_ins')
     verified_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
     timestamp = models.DateTimeField(default=timezone.now, editable=False)

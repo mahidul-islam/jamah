@@ -9,6 +9,9 @@
       </span>
       <span>
         <span class="badge badge-primary badge-pill">{{eventmember.status}}</span>
+        {% if eventmember.is_accountant %}
+          <span class="badge badge-success badge-pill">accountant</span>
+        {% endif %}
         {% if user.is_staff or user == event.creator %}
           {% if eventmember.member != event.creator %}
             <a class="btn btn-outline-success" href="{% url 'event:promote_member' event.id eventmember.member.id %}">
