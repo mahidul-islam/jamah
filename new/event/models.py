@@ -60,7 +60,7 @@ class EventMember(models.Model):
 class Cost(models.Model):
     uid = models.UUIDField(default=uuid.uuid4, editable=False)
     timestamp = models.DateTimeField(default = timezone.now, editable=False)
-    objected_by = models.ManyToManyField(EventMember, related_name='approved_costs', blank=True)
+    objected_by = models.ManyToManyField(EventMember, related_name='objected_costs', blank=True)
     is_objected = models.BooleanField(default = False)
     added_by = models.ForeignKey(EventMember, on_delete=models.CASCADE, related_name='created_costs')
     amount = models.DecimalField(max_digits = 10, decimal_places = 2)

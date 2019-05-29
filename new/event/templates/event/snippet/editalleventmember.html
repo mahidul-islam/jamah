@@ -12,6 +12,19 @@
         {% if eventmember.is_accountant %}
           <span class="badge badge-success badge-pill">accountant</span>
         {% endif %}
+        {% if user.is_staff or user == event.creator %}
+          {% if eventmember.member != event.creator %}
+            <a class="btn btn-outline-success" href="{% url 'event:promote_member' event.id eventmember.member.id %}">
+              Promote?
+            </a>
+            <a class="btn btn-outline-warning" href="{% url 'event:demote_member' event.id eventmember.member.id %}">
+              Demote?
+            </a>
+            <a class="btn btn-outline-danger" href="{% url 'event:remove_member' event.id eventmember.member.id %}">
+              Remove?
+            </a>
+          {% endif %}
+        {% endif %}
       </span>
     </li>
   {% endfor %}

@@ -5,7 +5,7 @@
 
 <br>
 <h3 class="text-center">
-  Event Details
+  Edit Event
   <small>
     of the jamah:
     <a href="{% url 'jamah:detail' event.jamah.id %}">{{event.jamah.jamahname}}</a>
@@ -30,38 +30,8 @@
 </div>
 <br>
 <br>
-<p class="h1 text-center">
-  <small>Total COST:</small>
-  <mark>{{event.total_cost}}</mark>
-  <i class="fas fa-money-bill-wave"></i>
-</p>
-<p class="h1 text-center">
-  <small>Per Head COST:</small>
-  <mark>{{event.per_head_cost}}</mark>
-  <i class="fas fa-money-bill-wave"></i>
-</p>
-<p class="h1 text-center">
-  <small>Total Recieved Money:</small>
-  <mark>{{event.account.amount}}</mark>
-  <i class="fas fa-money-bill-wave"></i>
-</p>
-<p class="h1 text-center">
-  <small>Total Donation:</small>
-  <mark>{{total_donation}}</mark>
-  <i class="fas fa-money-bill-wave"></i>
-</p>
-<br>
-<a href='{%url "event:finance" event.id%}' class="btn btn-info btn-block text-center btn-lg">
-  Check Out Financial State
-</a>
-<br>
-<a href='{%url "event:edit" event.id%}' class="btn btn-secondary btn-block text-center btn-lg">
-  <i class="far fa-edit"></i>
-  Edit Event
-</a>
-<br>
 <h3 class="lead">Existing members:</h3>
-  {% include 'event/snippet/alleventmember.html' with event=event %}
+  {% include 'event/snippet/editalleventmember.html' with event=event %}
 <br>
 
 {% if user.is_staff or user == event.creator or current_eventmember.status == 'modarator' %}
@@ -80,7 +50,7 @@
 
   <br>
   <h3 class="lead" >Costs:</h3>
-  {% include 'event/snippet/allcosts.html' with eventmember=current_eventmember costs=costs %}
+  {% include 'event/snippet/editallcost.html' with eventmember=current_eventmember costs=costs %}
 
   <br><br>
   <mark>Send Money for this event:</mark>
@@ -95,16 +65,8 @@
   <br>
 
   <h3 class="lead" >Money Recieved:</h3>
-  {% include 'event/snippet/allrecievedmoney.html' with eventmember=current_eventmember transactions=transactions %}
+  {% include 'event/snippet/editallrecievedmoney.html' with eventmember=current_eventmember transactions=transactions %}
 
-<br>
-<mark>Launch a poll for this event</mark>
-<form action="{% url 'event:create_event_poll' event.id %}" method="post">
-  {% csrf_token %}
-  {{pollForm.question_text|as_crispy_field}}
-  <input class="btn btn-primary" type="submit" name="" value=" Create Poll !!! ">
-</form>
-<br>
 <br>
 <h3 class="lead" >Polls:</h3>
 
