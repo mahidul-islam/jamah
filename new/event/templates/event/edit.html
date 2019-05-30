@@ -15,7 +15,12 @@
 <br>
 <div class="row d-flex justify-content-between">
   <div class="col-10">
-    <h3>Event:"<mark>{{event.name}}</mark>"
+    <h3>Event:
+      <mark>
+        <a href="{% url 'event:detail' event.id %}">
+          "{{event.name}}"
+        </a>
+      </mark>
       <small>
         Created by --
         <a href="{% url 'profile:user_profile' event.creator.id %}">
@@ -34,33 +39,15 @@
   {% include 'event/snippet/editalleventmember.html' with event=event %}
 <br>
 
-{% if user.is_staff or user == event.creator or current_eventmember.status == 'modarator' %}
-
-  <br><br>
-  <mark>Create a cost for this event</mark>
-  <form action="{% url 'event:create_cost' event.id %}" method="post">
-    {% csrf_token %}
-    {{costform.name|as_crispy_field}}
-    {{costform.amount|as_crispy_field}}
-    <input class="btn btn-primary" type="submit" name="" value=" Create Cost !!! ">
-  </form>
-  <br>
-
-{% endif %}
+<br>
+<h3 class="lead">Accountants:</h3>
+  {% include 'event/snippet/editallaccountant.html' with accountants=accountants %}
+<br>
 
   <br>
   <h3 class="lead" >Costs:</h3>
   {% include 'event/snippet/editallcost.html' with eventmember=current_eventmember costs=costs %}
 
-  <br><br>
-  <mark>Send Money for this event:</mark>
-  <br><br>
-  <form action="{% url 'event:transact' event.id %}" method="post">
-    {% csrf_token %}
-    {{transaction_form.is_donation|as_crispy_field}}
-    {{transaction_form.amount|as_crispy_field}}
-    <input class="btn btn-primary" type="submit" name="" value=" Send Money !!! ">
-  </form>
   <br>
   <br>
 
@@ -68,50 +55,9 @@
   {% include 'event/snippet/editallrecievedmoney.html' with eventmember=current_eventmember transactions=transactions %}
 
 <br>
+<br>
 <h3 class="lead" >Polls:</h3>
 
 {% include 'polls/snippet/allpolls.html' with polls=polls %}
 <br>
-<br>
-
-{% if users %}
-  {% if user.is_staff or user == event.creator %}
-    <h3 class="lead">Add member:</h3>
-    <form action="{% url 'event:save_member' event.id %}" method="post">
-      {% csrf_token %}
-      <ol class="list-group">
-        {% for user in users %}
-          <li class="list-group-item">
-            <input type="checkbox" name="member" value="{{ user.id }}">
-            <a href="{% url 'profile:user_profile' user.id %}">{{ user.username }}</a>
-          </li>
-        {% endfor %}
-      </ol>
-      <br>
-      <input class="btn btn-primary" type="submit" value="Add Member">
-    </form>
-    <br><br>
-  {% endif %}
-{% endif %}
-
-{% if candidate_accountants.count %}
-  {% if user.is_staff or user == event.creator %}
-    <h3 class="lead">Add accountat:</h3>
-    <form action="{% url 'event:add_accountants' event.id %}" method="post">
-      {% csrf_token %}
-      <ul class="list-group">
-        {% for candidate in candidate_accountants %}
-          <li class="list-group-item">
-            <input type="checkbox" name="member" value="{{ candidate.member.id }}">
-            <a href="{% url 'profile:user_profile' candidate.member.id %}">{{ candidate.member.username }}</a>
-          </li>
-        {% endfor %}
-      </ul>
-      <br>
-      <input class="btn btn-primary" type="submit" value="Add Accountant !!!">
-    </form>
-    <br><br>
-  {% endif %}
-{% endif %}
-
 {% endblock %}

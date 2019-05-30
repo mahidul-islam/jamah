@@ -31,6 +31,9 @@
             <a href="{% url 'profile:user_profile' transaction.verified_by.id %}">
               {{ transaction.verified_by.username|upper }}
             </a>
+            <a class="btn btn-outline-danger" href="{% url 'event:remove_verification' transaction.goes_to.event.id transaction.id %}">
+              Remove Verification
+            </a>
           {% elif eventmember.is_accountant or user.is_staff %}
             <a class="btn btn-outline-success" href="{% url 'event:verify_transaction' transaction.goes_to.event.id transaction.id %}">
               Verify?

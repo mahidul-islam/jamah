@@ -48,6 +48,7 @@ class EventMember(models.Model):
     is_responsible = models.BooleanField(default=False)
     account = models.OneToOneField(Account, on_delete = models.CASCADE)
     is_accountant = models.BooleanField(default=False)
+    total_verified = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
     def save(self, *args, **kwargs):
         if not self.status=='member':

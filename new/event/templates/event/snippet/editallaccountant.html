@@ -1,0 +1,29 @@
+{% if accountants.count %}
+
+  <ul class="list-group">
+    {% for accountant in accountants %}
+      <li class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+        <span>
+          <a href="{% url 'profile:user_profile' accountant.member.id %}">
+            {{accountant.member.username|upper}}
+          </a>
+          <small>Total Verified - </small>
+            <mark>{{accountant.total_verified}}</mark>
+            <i class="fas fa-money-bill-wave"></i>
+        </span>
+        <span>
+          <span class="badge badge-primary badge-pill">{{accountant.status}}</span>
+          {% if user.is_staff or user == event.creator %}
+            <a class="btn btn-outline-danger" href="#">
+              Revoke Status?
+            </a>
+          {% endif %}
+        </span>
+      </li>
+    {% endfor %}
+  </ul>
+
+{% else %}
+  <br>
+  <h3 class="lead"><mark>There seem to be no Cost Bearer yet !!!</mark></h3>
+{% endif %}

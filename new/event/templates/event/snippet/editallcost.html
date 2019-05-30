@@ -6,7 +6,7 @@
           <mark>{{cost.name}}</mark>
           --
           {{cost.amount}}
-          <i class="fas fa-lira-sign"></i>
+          <i class="fas fa-money-bill-wave"></i>
           <small>
             Added by --
             <a href="{% url 'profile:user_profile' event.creator.id %}">
@@ -25,6 +25,7 @@
             <a class="btn btn-outline-secondary" href="{% url 'event:object_cost' cost.event.id cost.id %}">Object?</a>
           {% endif %}
           {% if user == event.creator or user.is_staff %}
+            <a class="btn btn-outline-success" href="#">Remove Objection</a>
             <a class="btn btn-outline-danger" href="{% url 'event:delete_cost' cost.event.id cost.id %}">Delete?</a>
           {% endif %}
         </span>
