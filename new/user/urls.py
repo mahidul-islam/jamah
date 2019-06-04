@@ -5,6 +5,7 @@ app_name = 'myuser'
 
 urlpatterns = [
     path('signup', views.SignUp, name='signup'),
+    path('signup/add_account', views.add_account, name='add_account'),
 ]
 
 

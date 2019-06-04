@@ -4,8 +4,17 @@ from .forms import MyUserCreationForm
 from django.template import loader
 from django.shortcuts import render, redirect
 from django.urls import reverse
-from .models import MyUser
+from .models import MyUser, UserInfo
+from account.models import Account
 
+
+def add_account(request):
+    account = Account(description=request.user.username + '\'s account')
+    account.save()
+    print(account.description)
+    userinfo = UserInfo(user=request.user, account=account)
+    userinfo.save()
+    return HttpResponseRedirect(reverse('home'))
 
 def SignUp(request):
     if request.method == 'POST':
@@ -17,7 +26,7 @@ def SignUp(request):
             raw_password = form.cleaned_data.get('password1')
             user = authenticate(username=username, password=raw_password)
             login(request, user)
-            return HttpResponseRedirect(reverse('home'))
+            return HttpResponseRedirect(reverse('myuser:add_account'))
     else:
         # print('method is not Post')
         form = MyUserCreationForm()

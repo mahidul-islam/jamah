@@ -32,8 +32,11 @@
               {{ transaction.verified_by.username|upper }}
             </a>
           {% elif eventmember.is_accountant or user.is_staff %}
-            <a class="btn btn-outline-success btn-sm" href="{% url 'event:verify_transaction' transaction.goes_to.event.id transaction.id %}">
+            <a class="btn btn-outline-success btn-sm" href="#">
               Verify?
+            </a>
+            <a class="btn btn-outline-danger btn-sm" href="#">
+              Deny?
             </a>
           {% endif %}
         </span>

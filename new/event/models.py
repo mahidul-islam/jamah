@@ -14,7 +14,8 @@ class Event(models.Model):
     date = models.DateTimeField(default = timezone.now, editable=False)
     creator = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete = models.CASCADE, related_name = 'created_events')
     members = models.ManyToManyField(settings.AUTH_USER_MODEL)
-    account = models.OneToOneField(Account, on_delete = models.CASCADE)
+    account = models.OneToOneField(Account, on_delete = models.CASCADE, related_name='event_for_account')
+    cost_account = models.OneToOneField(Account, on_delete = models.CASCADE, related_name='event_for_cost_account')
     is_donation_only_event = models.BooleanField(default = False)
     jamah = models.ForeignKey(Jamah, on_delete=models.CASCADE, related_name = 'events')
     resposible_member_count = models.IntegerField(default=1)
@@ -46,9 +47,11 @@ class EventMember(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     timestamp = models.DateTimeField(default = timezone.now, editable=False)
     is_responsible = models.BooleanField(default=False)
-    account = models.OneToOneField(Account, on_delete = models.CASCADE)
+    accountant_account = models.OneToOneField(Account, on_delete = models.CASCADE, blank=True, null=True)
     is_accountant = models.BooleanField(default=False)
+    is_cost_observer = models.BooleanField(default=False)
     total_verified = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    total_sent_money = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
     def save(self, *args, **kwargs):
         if not self.status=='member':
@@ -67,9 +70,8 @@ class Cost(models.Model):
     amount = models.DecimalField(max_digits = 10, decimal_places = 2)
     name = models.CharField(max_length=255)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    is_observed = models.BooleanField(default=False)
+    observed_by = models.ForeignKey(EventMember, related_name='observed_costs', on_delete=models.CASCADE, blank=True, null=True)
 
     def save(self, *args, **kwargs):
-        if self.id:
-            if self.objected_by.count():
-                self.is_objected = True
         super(Cost, self).save(*args, **kwargs)

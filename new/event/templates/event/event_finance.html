@@ -8,32 +8,53 @@
   Financial Details
   <small>
     of the event:
-    <a href="{% url 'event:detail' event.id %}">{{event.name}}</a>
+    <a href="{% url 'event:detail' event.id %}">
+      {{event.name}}
+    </a>
   </small>
 </h3>
 <hr>
 <br>
-<p class="h1 text-center"><small>Total COST:</small> <mark>{{event.total_cost}}</mark></p>
+<p class="h1 text-center">
+  <small>Total COST:</small>
+  <mark>
+    {{event.total_cost}}
+  </mark>
+</p>
 <br>
-<h3 class="lead">Costs of "<mark>{{event.name}}</mark>"</h3>
   {% include 'event/snippet/allcosts.html' with eventmember=current_eventmember costs=costs %}
 <br>
-<p class="text-center h1"><small>Total Recieved:</small> <mark>{{event.account.amount}}</mark></p>
+<p class="text-center h1">
+  <small>Total Recieved:</small>
+  <mark>
+    {{event.account.amount}}
+  </mark>
+</p>
 <br>
-<h3 class="lead">Money Recieved List of "<mark>{{event.name}}</mark>"</h3>
   {% include 'event/snippet/allrecievedmoney.html' with eventmember=current_eventmember transactions=transactions %}
 <br>
 {% if total_donation == 0 %}
-  <p class="text-center h1"><small>Total Donation:</small> <mark>{{total_donation}}.00</mark></p>
+  <p class="text-center h1">
+    <small>Total Donation:</small>
+    <mark>{{total_donation}}.00</mark>
+  </p>
 {% else %}
-  <p class="text-center h1"><small>Total Donation:</small> <mark>{{total_donation}}</mark></p>
+  <p class="text-center h1">
+    <small>Total Donation:</small>
+    <mark>{{total_donation}}</mark>
+  </p>
 {% endif %}
 <br>
-<h3 class="lead">Donation List of "<mark>{{event.name}}</mark>"</h3>
   {% include 'event/snippet/allrecievedmoney.html' with eventmember=current_eventmember transactions=donations %}
 <br>
-<p class="text-center h1"><small>Total Member Count:</small> <mark>{{event.members.count}}</mark></p>
+<p class="text-center h1">
+  <small>Total Member Count:</small>
+  <mark>{{event.members.count}}</mark>
+</p>
 <br>
-<p class="h1 text-center"><small>Per Head COST:</small> <mark>{{event.per_head_cost}}</mark></p>
+<p class="h1 text-center">
+  <small>Per Head COST:</small>
+  <mark>{{event.per_head_cost}}</mark>
+</p>
 <br>
 {% endblock %}

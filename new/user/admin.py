@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .forms import MyUserChangeForm, MyUserCreationForm
-from .models import MyUser
+from .models import MyUser, UserInfo
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth import get_user_model
 
@@ -12,3 +12,5 @@ class UserAdmin(UserAdmin):
     list_display = ['username','email','is_active','is_staff',]
 
 admin.site.register(MyUser, UserAdmin)
+
+admin.site.register(UserInfo)

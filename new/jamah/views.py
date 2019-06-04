@@ -77,7 +77,7 @@ def join_jamah(request, jamah_id):
         # user didnot requested before so create jamahMember
         jamah.requested_to_join.add(request.user)
         jamah.save()
-        account = Account()
+        account = Account(description = 'Jamah: ' + jamah.jamahname + ' ' + ' ,Member: ' + request.user.username)
         account.save()
         jamahMember = JamahMember(member=request.user, jamah=jamah, status='member', account=account).save()
         messages.success(request, 'You requested to join the Group')
@@ -85,13 +85,13 @@ def join_jamah(request, jamah_id):
 
 def create(request):
     name = request.POST['jamahname']
-    account = Account()
+    account = Account(description = 'Jamah: ' + name + '\'s account')
     account.save()
     jamah = Jamah(jamahname = name, creator = request.user, account=account)
     jamah.save()
     jamah.members.add(request.user)
     jamah.save()
-    account2 = Account()
+    account2 = Account(description = 'Jamah: ' + name + ' ' + ' ,Member: ' + request.user.username)
     account2.save()
     jamahMember = JamahMember(
         member = request.user,
@@ -141,13 +141,23 @@ def create_jamah_event(request, jamah_id):
     jamah = Jamah.objects.get(pk = jamah_id)
     name = request.POST['name']
     messages.success(request, 'Added a Event for the jamah...')
-    account = Account()
+    account = Account(description = 'Event: ' + name + '\'s account')
     account.save()
-    event = Event(name = name, creator = request.user, account = account, jamah=jamah)
+    cost_account = Account(description = 'Event: ' + name + '\'s cost account')
+    cost_account.save()
+    event = Event(name = name, creator = request.user, account = account, jamah=jamah, cost_account=cost_account)
     event.save()
     event.members.add(request.user)
     event.save()
-    account2 = Account()
-    account2.save()
-    eventMember = EventMember(member=request.user, event=event, status='creator', account=account2).save()
+    member_account = Account(description = 'Event: ' + name + ' ' + ' ,Member: ' + request.user.username)
+    member_account.mother_account = event.account
+    member_account.save()
+    eventMember = EventMember(
+        member = request.user,
+        event = event,
+        status = 'creator',
+        accountant_account = member_account,
+        is_accountant = True,
+        is_cost_observer = True,
+        ).save()
     return HttpResponseRedirect(reverse('jamah:detail', args = (jamah_id,)))

@@ -7,10 +7,7 @@
 <h2 class="text-center">Log IN</h2>
 
 <div class="row">
-  <div class="col">
-
-  </div>
-  <div class="col">
+  <div class="col col-lg-4 mx-auto">
     <form method="post">
       {% csrf_token %}
       {{ form.username|as_crispy_field }}
@@ -21,9 +18,6 @@
         </div>
       </div>
     </form>
-  </div>
-  <div class="col">
-
   </div>
 </div>
 <br>

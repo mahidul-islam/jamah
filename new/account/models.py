@@ -7,6 +7,10 @@ class Account(models.Model):
     uid = models.UUIDField(default=uuid.uuid4, editable=False)
     amount = models.DecimalField(max_digits = 10, decimal_places = 2, default = 0)
     mother_account = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True, related_name='member_accounts')
+    description = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.description
 
 class Transaction(models.Model):
     uid = models.UUIDField(default=uuid.uuid4, editable=False)

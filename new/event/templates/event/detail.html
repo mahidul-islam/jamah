@@ -135,7 +135,7 @@
 
 {% if candidate_accountants.count %}
   {% if user.is_staff or user == event.creator %}
-    <h3 class="lead">Add accountat:</h3>
+    <h3 class="lead">Add Accountant:</h3>
     <form action="{% url 'event:add_accountants' event.id %}" method="post">
       {% csrf_token %}
       <ul class="list-group">
@@ -148,6 +148,26 @@
       </ul>
       <br>
       <input class="btn btn-primary" type="submit" value="Add Accountant !!!">
+    </form>
+    <br><br>
+  {% endif %}
+{% endif %}
+
+{% if candidate_observers.count %}
+  {% if user.is_staff or user == event.creator %}
+    <h3 class="lead">Add Observer:</h3>
+    <form action="{% url 'event:add_observers' event.id %}" method="post">
+      {% csrf_token %}
+      <ul class="list-group">
+        {% for candidate in candidate_observers %}
+          <li class="list-group-item">
+            <input type="checkbox" name="member" value="{{ candidate.member.id }}">
+            <a href="{% url 'profile:user_profile' candidate.member.id %}">{{ candidate.member.username }}</a>
+          </li>
+        {% endfor %}
+      </ul>
+      <br>
+      <input class="btn btn-primary" type="submit" value="Add Observer !!!">
     </form>
     <br><br>
   {% endif %}

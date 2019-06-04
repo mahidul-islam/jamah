@@ -12,6 +12,9 @@
         {% if eventmember.is_accountant %}
           <span class="badge badge-success badge-pill">accountant</span>
         {% endif %}
+        {% if eventmember.is_cost_observer %}
+          <span class="badge badge-info badge-pill">observer</span>
+        {% endif %}
       </span>
     </li>
   {% endfor %}
