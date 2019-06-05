@@ -1,4 +1,4 @@
-{% if transactions.count %}
+{% if transactions|length %}
   <ul class="list-group">
     {% for transaction in transactions %}
       <li class="
@@ -16,8 +16,8 @@
           </mark>
           <small>
             Recieved from --
-            <a href="{% url 'profile:user_profile' transaction.comes_from.eventmember.member.id %}">
-              {{ transaction.comes_from.eventmember.member.username|upper }}
+            <a href="{% url 'profile:user_profile' transaction.comes_from.userinfo.user.id %}">
+              {{ transaction.comes_from.userinfo.user.username|upper }}
             </a>
             at {{transaction.timestamp}}
           </small>
@@ -34,14 +34,11 @@
             <a class="btn btn-outline-danger" href="#">
               Remove Verification
             </a>
-          {% elif eventmember.is_accountant or user.is_staff %}
-            <a class="btn btn-outline-success" href="#">
-              Verify?
-            </a>
-            <a class="btn btn-outline-danger" href="#">
-              Deny?
-            </a>
-          {% endif %}
+            {% elif eventmember.is_accountant or user.is_staff %}
+              <a class="btn btn-outline-success" href="{% url 'event:verify_transaction' transaction.goes_to.eventmember.event.id transaction.id %}">
+                Verify?
+              </a>
+            {% endif %}
           {% if transaction.comes_from.eventmember.member == request.user or user.is_staff %}
             <a href="#" class="btn btn-outline-danger">
               Delete

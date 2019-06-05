@@ -50,63 +50,58 @@
   <mark>{{total_donation}}</mark>
   <i class="fas fa-money-bill-wave"></i>
 </p>
-<br>
-<a href='{%url "event:finance" event.id%}' class="btn btn-info btn-block text-center btn-lg">
-  <i class="fas fa-landmark"></i>
-  Check Out Financial State
-</a>
-<br>
-<a href='{%url "event:edit" event.id%}' class="btn btn-secondary btn-block text-center btn-lg">
-  <i class="far fa-edit"></i>
-  Edit Event
-</a>
-<br>
+<div class="container">
+  <div class="row">
+    <div class="col col-lg-8 mx-auto">
+      <br>
+      <a href='{%url "event:finance" event.id%}' class="btn btn-info btn-block text-center btn-lg">
+        <i class="fas fa-landmark"></i>
+        Check Out Financial State
+      </a>
+      <br>
+      <a href='{%url "event:edit" event.id%}' class="btn btn-secondary btn-block text-center btn-lg">
+        <i class="far fa-edit"></i>
+        Edit Event
+      </a>
+      <br>
+      <a href='{% url "event:create_cost" event.id %}' class="btn btn-warning btn-block text-center btn-lg">
+        <i class="fas fa-comment-dollar"></i>
+        Create Cost for this Event
+      </a>
+      <br>
+      <a href='{% url "event:make_transaction" event.id %}' class="btn btn-success btn-block text-center btn-lg">
+        <i class="far fa-paper-plane"></i>
+        Send Money to this Event
+      </a>
+      <br>
+    </div>
+  </div>
+</div>
+
+<br><br>
+
 <h3 class="lead">Existing members:</h3>
   {% include 'event/snippet/alleventmember.html' with event=event %}
-<br>
 
-{% if user.is_staff or user == event.creator or current_eventmember.status == 'modarator' %}
+<br><br>
 
-  <br><br>
-  <mark>Create a cost for this event</mark>
-  <form action="{% url 'event:create_cost' event.id %}" method="post">
-    {% csrf_token %}
-    {{costform.name|as_crispy_field}}
-    {{costform.amount|as_crispy_field}}
-    <input class="btn btn-primary" type="submit" name="" value=" Create Cost !!! ">
-  </form>
-  <br>
-
-{% endif %}
-
-  <br>
-  <h3 class="lead" >Costs:</h3>
+<h3 class="lead" >Costs:</h3>
   {% include 'event/snippet/allcosts.html' with eventmember=current_eventmember costs=costs %}
 
-  <br><br>
-  <mark>Send Money for this event:</mark>
-  <br><br>
-  <form action="{% url 'event:transact' event.id %}" method="post">
-    {% csrf_token %}
-    {{transaction_form.is_donation|as_crispy_field}}
-    {{transaction_form.amount|as_crispy_field}}
-    <input class="btn btn-primary" type="submit" name="" value=" Send Money !!! ">
-  </form>
-  <br>
-  <br>
+<br><br>
 
-  <h3 class="lead" >Money Recieved:</h3>
+<h3 class="lead" >Money Recieved:</h3>
   {% include 'event/snippet/allrecievedmoney.html' with eventmember=current_eventmember transactions=transactions %}
 
-<br>
+<br><br>
+
 <mark>Launch a poll for this event</mark>
 <form action="{% url 'event:create_event_poll' event.id %}" method="post">
   {% csrf_token %}
   {{pollForm.question_text|as_crispy_field}}
   <input class="btn btn-primary" type="submit" name="" value=" Create Poll !!! ">
 </form>
-<br>
-<br>
+<br><br>
 <h3 class="lead" >Polls:</h3>
 
 {% include 'polls/snippet/allpolls.html' with polls=polls %}

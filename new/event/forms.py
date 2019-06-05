@@ -6,6 +6,7 @@ class EventCreateForm(forms.Form):
 class CostCreateForm(forms.Form):
     amount = forms.DecimalField(max_digits=10, decimal_places=2)
     name = forms.CharField(max_length=255)
+    from_accountant_or_myself = forms.ModelChoiceField(queryset=None)
 
 class UserAddForm(forms.Form):
-    choice = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple)
+    candidate_members = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple)

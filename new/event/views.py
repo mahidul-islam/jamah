@@ -14,10 +14,14 @@ from account.forms import TransactionForm
 from .forms import EventCreateForm, CostCreateForm, UserAddForm
 
 
-def update_event_account():
-    pass
-
 def do(request):
+    # events = Event.objects.all()
+    # for event in events:
+    #     eventmembers = EventMember.objects.filter(event=event)
+    #     for eventmember in eventmembers:
+    #         if not eventmember.is_accountant:
+    #             eventmember.accountant_account.delete()
+
     return HttpResponseRedirect(reverse('event:index'))
 
 def index(request):
@@ -25,7 +29,7 @@ def index(request):
     if request.user.is_authenticated:
         form = EventCreateForm()
         eventbyme = Event.objects.filter(creator = request.user)
-        eventbyall = request.user.event_set.all()
+        eventbyall = request.user.event_set.exclude(creator = request.user)
         context = {
             'form':form,
             'eventOfMine':eventbyme,
@@ -66,7 +70,15 @@ def detail(request, event_id):
         costform = CostCreateForm()
         userform = UserAddForm()
         transaction_form = TransactionForm()
-        transactions = event.account.transaction_ins.all()
+        accountants = EventMember.objects.filter(event=event, is_accountant=True)
+        transaction_form.fields['accountant'].choices = [(accountant.id ,accountant.member.username) for accountant in accountants]
+        choices = [(accountant.id ,accountant.member.username) for accountant in accountants]
+        choices.append((0, 'Myself*'))
+        costform.fields['from_accountant_or_myself'].choices = choices
+        transactions = []
+        for accountant in accountants:
+            for transaction in accountant.accountant_account.transaction_ins.all():
+                transactions.append(transaction)
         donations = event.account.transaction_ins.filter(is_donation = True)
         total_donation = 0
         for donation in donations:
@@ -98,7 +110,10 @@ def edit(request, event_id):
     observers = EventMember.objects.filter(event=event, is_cost_observer=True)
     polls = event.polls.all()
     costs = event.cost_set.all()
-    transactions = event.account.transaction_ins.all()
+    transactions = []
+    for accountant in accountants:
+        for transaction in accountant.accountant_account.transaction_ins.all():
+            transactions.append(transaction)
     donations = event.account.transaction_ins.filter(is_donation = True)
     context = {
         'observers': observers,
@@ -117,16 +132,32 @@ def finance(request, event_id):
     event = Event.objects.get(pk = event_id)
     current_eventmember = EventMember.objects.get(event=event, member=request.user)
     costs = event.cost_set.all()
-    transactions = event.account.transaction_ins.filter(is_donation = False)
-    donations = event.account.transaction_ins.filter(is_donation = True)
-    total_donation = 0
-    for donation in donations:
-        total_donation += donation.amount
+    transactions = []
+    accountants = EventMember.objects.filter(event=event, is_accountant=True)
+    for accountant in accountants:
+        for transaction in accountant.accountant_account.transaction_ins.all():
+            transactions.append(transaction)
+    total_donation = 0.00
+    general_transactions = []
+    donation_transactions = []
+    event.account.amount = 0
+    for transaction in transactions:
+        if transaction.is_donation:
+            donation_transactions.append(transaction)
+            total_donation += float(transaction.amount)
+            event.account.amount += transaction.amount
+        else:
+            general_transactions.append(transaction)
+            event.account.amount = event.account.amount + transaction.amount
+    event.account.save()
+    event.total_donation = total_donation
+    event.total_recieved_money = float(event.account.amount) - total_donation
+    event.save()
     context = {
         'total_donation': total_donation,
-        'donations': donations,
+        'donations': donation_transactions,
         'costs': costs,
-        'transactions': transactions,
+        'transactions': general_transactions,
         'current_eventmember': current_eventmember,
         'event': event,
     }
@@ -135,15 +166,40 @@ def finance(request, event_id):
 
 def create_cost(request, event_id):
     event = Event.objects.get(pk = event_id)
-    name = request.POST['name']
-    amount = request.POST['amount']
-    eventmember = EventMember.objects.get(event=event, member=request.user)
-    cost = Cost(amount=amount, name=name, added_by=eventmember, event=event)
-    cost.save()
-    event.total_cost = float(event.total_cost) + float(cost.amount)
-    event.save()
-    messages.success(request, 'The cost is added !!! ')
-    return HttpResponseRedirect(reverse('event:detail', args = (event_id,)))
+
+    if request.method == 'POST':
+        name = request.POST['name']
+        amount = request.POST['amount']
+        accountant_id = request.POST['from_accountant_or_myself']
+        current_eventmember = EventMember.objects.get(event=event, member=request.user)
+        # print(eventmember.member.username)
+        # print(current_eventmember.member.username)
+        print(accountant_id)
+        if accountant_id == '0':
+            transaction = Transaction(amount=amount,comes_from=request.user.info.account,goes_to=event.cost_account).save()
+            print(transaction)
+        else:
+            accountant = EventMember.objects.get(pk = accountant_id)
+            transaction = Transaction(amount=amount,comes_from=accountant.accountant_account,goes_to=event.cost_account).save()
+            print(transaction)
+        cost = Cost(amount=amount, name=name, added_by=current_eventmember, event=event)
+        cost.save()
+        event.total_cost = float(event.total_cost) + float(cost.amount)
+        event.save()
+        messages.success(request, 'Added COST to this Event !!! ')
+        return HttpResponseRedirect(reverse('event:detail', args = (event_id,)))
+    else:
+        costform = CostCreateForm()
+        accountants = EventMember.objects.filter(event=event, is_accountant=True)
+        choices = [(accountant.id ,accountant.member.username) for accountant in accountants]
+        choices.append((0, 'Myself*'))
+        costform.fields['from_accountant_or_myself'].choices = choices
+        context = {
+            'costform': costform,
+            'event': event,
+        }
+        template = loader.get_template('event/create_cost.html')
+        return HttpResponse(template.render(context, request))
 
 def delete_cost(request, event_id, cost_id):
     event = Event.objects.get(pk = event_id)
@@ -266,45 +322,53 @@ def create_event_poll(request, event_id):
 
 def make_transaction(request, event_id):
     event = Event.objects.get(pk = event_id)
-    transaction_form = TransactionForm()
-    context = {
-        'event': event,
-        'transaction_form': transaction_form
-    }
-    template = loader.get_template('event/transaction.html')
-    return HttpResponse(template.render(context, request))
-
-def transact(request, event_id):
-    # event = Event.objects.get(pk = event_id)
-    # is_donation = request.POST.getlist('is_donation')
-    # amount = request.POST['amount']
-    # eventmember = EventMember.objects.get(member=request.user, event=event)
-    # user_account = request.user.info.account
-    # if len(is_donation):
-    #     transaction = Transaction(amount=amount, goes_to=event.account, comes_from=eventmember.account, is_donation=True)
-    # else:
-    #     transaction = Transaction(amount=amount, goes_to=event.account, comes_from=eventmember.account)
-    # event.account.amount = float(event.account.amount) + float(amount)
-    # event.account.save()
-    # eventmember.account.amount = float(eventmember.account.amount) + float(amount)
-    # eventmember.account.save()
-    # transaction.save()
-    messages.success(request, 'Replace the code')
-    return HttpResponseRedirect(reverse('event:detail', args = (event_id,)))
+    if request.method == 'POST':
+        is_donation = request.POST.getlist('is_donation')
+        amount = request.POST['amount']
+        accountant_id = request.POST['accountant']
+        accountant = EventMember.objects.get(pk = accountant_id)
+        eventmember = EventMember.objects.get(member=request.user, event=event)
+        user_account = request.user.info.account
+        if len(is_donation):
+            transaction = Transaction(amount=amount, goes_to=accountant.accountant_account, comes_from=user_account, is_donation=True)
+        else:
+            transaction = Transaction(amount=amount, goes_to=accountant.accountant_account, comes_from=user_account)
+        transaction.save()
+        messages.success(request, 'Added Money to the event with your name')
+        return HttpResponseRedirect(reverse('event:detail', args = (event_id,)))
+    else:
+        transaction_form = TransactionForm()
+        accountants = EventMember.objects.filter(event=event, is_accountant=True)
+        transaction_form.fields['accountant'].choices = [(accountant.id ,accountant.member.username) for accountant in accountants]
+        context = {
+            'event': event,
+            'transaction_form': transaction_form
+        }
+        template = loader.get_template('event/transaction.html')
+        return HttpResponse(template.render(context, request))
 
 def verify_transaction(request, event_id, transaction_id):
-    # event = Event.objects.get(pk = event_id)
-    # transaction = Transaction.objects.get(pk = transaction_id)
-    # eventmember = EventMember.objects.get(member=request.user, event=event)
-    # if eventmember.is_accountant:
-    #     transaction.verified_by = request.user
-    #     eventmember.total_verified += transaction.amount
-    #     eventmember.save()
-    #     transaction.save()
-    #     messages.success(request, 'The transaction is Verified !!!')
-    # else:
-    #     messages.warning(request, 'You are not Authorized to verify !!!')
-    messages.success(request, 'Replace the code!!!')
+    event = Event.objects.get(pk = event_id)
+    transaction = Transaction.objects.get(pk = transaction_id)
+    money_from_eventmember = EventMember.objects.get(member=transaction.comes_from.userinfo.user, event=event)
+    accountant = EventMember.objects.get(member=request.user, event=event)
+    if transaction.goes_to.eventmember == accountant:
+        transaction.verified_by = request.user
+        accountant.total_verified += transaction.amount
+        accountant.save()
+        transaction.save()
+        if transaction.is_donation:
+            money_from_eventmember.total_donation += transaction.amount
+        else:
+            money_from_eventmember.total_sent_money += transaction.amount
+        money_from_eventmember.save()
+        event.account.amount += transaction.amount
+        event.account.save()
+        accountant.accountant_account.amount += transaction.amount
+        accountant.accountant_account.save()
+        messages.success(request, 'The transaction is Verified !!!')
+    else:
+        messages.warning(request, 'You are not Authorized to verify !!!')
     return HttpResponseRedirect(reverse('event:detail', args = (event_id,)))
 
 def deny_transaction(request, event_id, transaction_id):

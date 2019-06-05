@@ -19,12 +19,13 @@ urlpatterns = [
     path('<int:event_id>/<int:member_id>/remove_member', views.remove_member, name = 'remove_member'),
     path('<int:event_id>/<int:member_id>/promote_member', views.promote_member, name = 'promote_member'),
     path('<int:event_id>/<int:member_id>/demote_member', views.demote_member, name = 'demote_member'),
-    path('<int:event_id>/transact', views.transact, name = 'transact'),
+    # path('<int:event_id>/transact', views.transact, name = 'transact'),
     path('<int:event_id>/transaction/<int:transaction_id>/verify', views.verify_transaction, name = 'verify_transaction'),
     path('<int:event_id>/transaction/<int:transaction_id>/deny', views.deny_transaction, name = 'deny_transaction'),
     path('<int:event_id>/transaction/<int:transaction_id>/remove_verification', views.remove_verification, name = 'remove_verification'),
     path('<int:event_id>/transaction/<int:transaction_id>/delete', views.delete_transaction, name = 'delete_transaction'),
     path('<int:event_id>/make_transaction', views.make_transaction, name = 'make_transaction'),
+    path('<int:event_id>/create_cost', views.create_cost, name = 'create_cost'),
     # TODO: add event financial state instead
     # path('<int:event_id>/cost/<int:cost_id>', views.cost_detail, name='cost_detail')
 ]

@@ -1,4 +1,4 @@
-{% if transactions.count %}
+{% if transactions|length %}
   <ul class="list-group">
     {% for transaction in transactions %}
       <li class="
@@ -16,8 +16,8 @@
           </mark>
           <small>
             Recieved from --
-            <a href="{% url 'profile:user_profile' transaction.comes_from.eventmember.member.id %}">
-              {{ transaction.comes_from.eventmember.member.username|upper }}
+            <a href="{% url 'profile:user_profile' transaction.comes_from.userinfo.user.id %}">
+              {{ transaction.comes_from.userinfo.user.username|upper }}
             </a>
             at {{transaction.timestamp}}
           </small>
@@ -27,16 +27,19 @@
             <p class="badge badge-primary badge-pill">donation</p>
           {% endif %}
           {% if transaction.verified_by %}
-            <small>Verified by --</small>
+            <small>Accountant --</small>
             <a href="{% url 'profile:user_profile' transaction.verified_by.id %}">
               {{ transaction.verified_by.username|upper }}
             </a>
-          {% elif eventmember.is_accountant or user.is_staff %}
-            <a class="btn btn-outline-success btn-sm" href="#">
+          {% elif transaction.goes_to.eventmember.member == user %}
+            <a class="btn btn-outline-success btn-sm" href="{% url 'event:verify_transaction' transaction.goes_to.eventmember.event.id transaction.id %}">
               Verify?
             </a>
-            <a class="btn btn-outline-danger btn-sm" href="#">
-              Deny?
+          {% else %}
+            <p class="badge badge-danger badge-pill">not verified</p>
+            <small>Accountant --</small>
+            <a href="{% url 'profile:user_profile' transaction.goes_to.eventmember.member.id %}">
+              {{ transaction.goes_to.eventmember.member.username|upper }}
             </a>
           {% endif %}
         </span>

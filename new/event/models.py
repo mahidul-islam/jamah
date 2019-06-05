@@ -23,6 +23,8 @@ class Event(models.Model):
     admin_member_count = models.IntegerField(default=0)
     per_head_cost = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     total_cost = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    total_donation = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    total_recieved_money = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     event_finished = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
@@ -52,8 +54,10 @@ class EventMember(models.Model):
     is_cost_observer = models.BooleanField(default=False)
     total_verified = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     total_sent_money = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    total_donation = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
     def save(self, *args, **kwargs):
+        self.event.members.add(self.member)
         if not self.status=='member':
             self.is_responsible = True
         super(EventMember, self).save(*args, **kwargs)

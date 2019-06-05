@@ -27,23 +27,16 @@
 <p class="text-center h1">
   <small>Total Recieved:</small>
   <mark>
-    {{event.account.amount}}
+    {{event.total_recieved_money}}
   </mark>
 </p>
 <br>
   {% include 'event/snippet/allrecievedmoney.html' with eventmember=current_eventmember transactions=transactions %}
 <br>
-{% if total_donation == 0 %}
-  <p class="text-center h1">
-    <small>Total Donation:</small>
-    <mark>{{total_donation}}.00</mark>
-  </p>
-{% else %}
-  <p class="text-center h1">
-    <small>Total Donation:</small>
-    <mark>{{total_donation}}</mark>
-  </p>
-{% endif %}
+<p class="text-center h1">
+  <small>Total Donation:</small>
+  <mark>{{event.total_donation}}</mark>
+</p>
 <br>
   {% include 'event/snippet/allrecievedmoney.html' with eventmember=current_eventmember transactions=donations %}
 <br>
