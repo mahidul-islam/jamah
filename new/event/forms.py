@@ -10,3 +10,6 @@ class CostCreateForm(forms.Form):
 
 class UserAddForm(forms.Form):
     candidate_members = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple)
+
+class SelectHeadAccountantForm(forms.Form):
+    head_accountant = forms.ModelChoiceField(queryset=None)

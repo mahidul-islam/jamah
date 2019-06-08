@@ -15,7 +15,7 @@
 <br>
 <div class="row d-flex justify-content-between">
   <div class="col-10">
-    <h3>Event:"<mark>{{event.name}}</mark>"
+    <h3>Event: <mark>"{{event.name}}"</mark>
       <small>
         Created by --
         <a href="{% url 'profile:user_profile' event.creator.id %}">
@@ -47,7 +47,7 @@
 </p>
 <p class="h1 text-center">
   <small>Total Donation:</small>
-  <mark>{{total_donation}}</mark>
+  <mark>{{event.total_donation}}</mark>
   <i class="fas fa-money-bill-wave"></i>
 </p>
 <div class="container">
@@ -57,6 +57,11 @@
       <a href='{%url "event:finance" event.id%}' class="btn btn-info btn-block text-center btn-lg">
         <i class="fas fa-landmark"></i>
         Check Out Financial State
+      </a>
+      <br>
+      <a href='{%url "event:ammas_finance" event.id%}' class="btn btn-primary btn-block text-center btn-lg">
+        <i class="fas fa-landmark"></i>
+        Amma's Financial State
       </a>
       <br>
       <a href='{%url "event:edit" event.id%}' class="btn btn-secondary btn-block text-center btn-lg">
@@ -85,13 +90,18 @@
 
 <br><br>
 
+<h3 class="lead" >All Money Recieved:</h3>
+  {% include 'event/snippet/allrecievedmoney.html' with eventmembers=eventmembers %}
+
+<br><br>
+
 <h3 class="lead" >Costs:</h3>
   {% include 'event/snippet/allcosts.html' with eventmember=current_eventmember costs=costs %}
 
 <br><br>
 
-<h3 class="lead" >Money Recieved:</h3>
-  {% include 'event/snippet/allrecievedmoney.html' with eventmember=current_eventmember transactions=transactions %}
+<h3 class="lead" >All Transactions:</h3>
+  {% include 'event/snippet/alltransactions.html' with eventmember=current_eventmember transactions=transactions %}
 
 <br><br>
 
@@ -105,67 +115,82 @@
 <h3 class="lead" >Polls:</h3>
 
 {% include 'polls/snippet/allpolls.html' with polls=polls %}
-<br>
-<br>
 
-{% if users %}
-  {% if user.is_staff or user == event.creator %}
-    <h3 class="lead">Add member:</h3>
-    <form action="{% url 'event:save_member' event.id %}" method="post">
-      {% csrf_token %}
-      <ol class="list-group">
-        {% for user in users %}
-          <li class="list-group-item">
-            <input type="checkbox" name="member" value="{{ user.id }}">
-            <a href="{% url 'profile:user_profile' user.id %}">{{ user.username }}</a>
-          </li>
-        {% endfor %}
-      </ol>
-      <br>
-      <input class="btn btn-primary" type="submit" value="Add Member">
-    </form>
-    <br><br>
-  {% endif %}
-{% endif %}
+<br><br>
 
-{% if candidate_accountants.count %}
-  {% if user.is_staff or user == event.creator %}
-    <h3 class="lead">Add Accountant:</h3>
-    <form action="{% url 'event:add_accountants' event.id %}" method="post">
-      {% csrf_token %}
-      <ul class="list-group">
-        {% for candidate in candidate_accountants %}
-          <li class="list-group-item">
-            <input type="checkbox" name="member" value="{{ candidate.member.id }}">
-            <a href="{% url 'profile:user_profile' candidate.member.id %}">{{ candidate.member.username }}</a>
-          </li>
-        {% endfor %}
-      </ul>
-      <br>
-      <input class="btn btn-primary" type="submit" value="Add Accountant !!!">
-    </form>
-    <br><br>
-  {% endif %}
-{% endif %}
+<div class="row">
+  <div class="col col-lg-8 mx-auto">
 
-{% if candidate_observers.count %}
-  {% if user.is_staff or user == event.creator %}
-    <h3 class="lead">Add Observer:</h3>
-    <form action="{% url 'event:add_observers' event.id %}" method="post">
-      {% csrf_token %}
-      <ul class="list-group">
-        {% for candidate in candidate_observers %}
-          <li class="list-group-item">
-            <input type="checkbox" name="member" value="{{ candidate.member.id }}">
-            <a href="{% url 'profile:user_profile' candidate.member.id %}">{{ candidate.member.username }}</a>
-          </li>
-        {% endfor %}
-      </ul>
-      <br>
-      <input class="btn btn-primary" type="submit" value="Add Observer !!!">
-    </form>
+    {% if users %}
+      {% if user.is_staff or user == event.creator %}
+        <h3 class="lead">Add member:</h3>
+        <form action="{% url 'event:save_member' event.id %}" method="post">
+          {% csrf_token %}
+          <ol class="list-group">
+            {% for user in users %}
+              <li class="list-group-item">
+                <input type="checkbox" name="member" value="{{ user.id }}">
+                <a href="{% url 'profile:user_profile' user.id %}">{{ user.username }}</a>
+              </li>
+            {% endfor %}
+          </ol>
+          <br>
+          <input class="btn btn-primary" type="submit" value="Add Member">
+        </form>
+        <br><br>
+      {% endif %}
+    {% endif %}
+
+    {% if candidate_accountants.count %}
+      {% if user.is_staff or user == event.creator %}
+        <h3 class="lead">Add Accountant:</h3>
+        <form action="{% url 'event:add_accountants' event.id %}" method="post">
+          {% csrf_token %}
+          <ul class="list-group">
+            {% for candidate in candidate_accountants %}
+              <li class="list-group-item">
+                <input type="checkbox" name="member" value="{{ candidate.member.id }}">
+                <a href="{% url 'profile:user_profile' candidate.member.id %}">{{ candidate.member.username }}</a>
+              </li>
+            {% endfor %}
+          </ul>
+          <br>
+          <input class="btn btn-primary" type="submit" value="Add Accountant !!!">
+        </form>
+        <br><br>
+      {% endif %}
+    {% endif %}
+
+    {% if user == event.creator or user.is_superuser %}
+      <form action="{% url 'event:change_head_accountant' event.id %}" method="post">
+        {% csrf_token %}
+        {{head_accountant_form|crispy}}
+        <input type="submit" class="btn btn-primary" value="Change Head Accountant...">
+      </form>
+    {% endif %}
+
     <br><br>
-  {% endif %}
-{% endif %}
+
+    {% if candidate_observers.count %}
+      {% if user.is_staff or user == event.creator %}
+        <h3 class="lead">Add Observer:</h3>
+        <form action="{% url 'event:add_observers' event.id %}" method="post">
+          {% csrf_token %}
+          <ul class="list-group">
+            {% for candidate in candidate_observers %}
+              <li class="list-group-item">
+                <input type="checkbox" name="member" value="{{ candidate.member.id }}">
+                <a href="{% url 'profile:user_profile' candidate.member.id %}">{{ candidate.member.username }}</a>
+              </li>
+            {% endfor %}
+          </ul>
+          <br>
+          <input class="btn btn-primary" type="submit" value="Add Observer !!!">
+        </form>
+        <br><br>
+      {% endif %}
+    {% endif %}
+  </div>
+</div>
 
 {% endblock %}

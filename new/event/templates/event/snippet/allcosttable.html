@@ -1,0 +1,39 @@
+{% if costs.count %}
+  <div class="table-responsive">
+    <table class="table table-borderless table-striped table-hover mx-auto">
+      <thead>
+        <tr>
+          <th>Cost</th>
+          <th>Amount</th>
+          <th>Balance</th>
+        </tr>
+      </thead>
+        <tbody>
+          {% for cost in costs %}
+          <tr>
+            <td>{{cost.name}}</td>
+            <td>
+              {{cost.amount}}
+              <i class="fas fa-money-bill-wave"></i>
+            </td>
+            <td>
+              100
+              <i class="fas fa-money-bill-wave"></i>
+            </td>
+          </tr>
+          {% endfor %}
+          <tr>
+            <td></td>
+            <td rowspan="2"><mark><strong> Total Cost : </strong></mark></td>
+            <td>
+              <strong>{{event.total_cost}}</strong>
+              <i class="fas fa-money-bill-wave"></i>
+            </td>
+          </tr>
+        </tbody>
+    </table>
+  </div>
+{% else %}
+  <br>
+  <h3 class="lead"><mark>No Costs Created Yet !!!</mark></h3>
+{% endif %}

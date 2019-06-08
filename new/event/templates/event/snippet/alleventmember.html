@@ -9,7 +9,9 @@
       </span>
       <span>
         <span class="badge badge-primary badge-pill">{{eventmember.status}}</span>
-        {% if eventmember.is_accountant %}
+        {% if eventmember.is_head_accountant %}
+          <span class="badge badge-success badge-pill">head accountant</span>
+        {% elif eventmember.is_accountant %}
           <span class="badge badge-success badge-pill">accountant</span>
         {% endif %}
         {% if eventmember.is_cost_observer %}

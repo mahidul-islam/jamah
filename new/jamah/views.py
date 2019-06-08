@@ -158,6 +158,7 @@ def create_jamah_event(request, jamah_id):
         status = 'creator',
         accountant_account = member_account,
         is_accountant = True,
+        is_head_accountant = True,
         is_cost_observer = True,
         ).save()
     return HttpResponseRedirect(reverse('jamah:detail', args = (jamah_id,)))

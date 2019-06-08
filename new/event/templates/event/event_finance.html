@@ -14,31 +14,36 @@
   </small>
 </h3>
 <hr>
+<br><br>
+  {% include 'event/snippet/allcosttable.html' with eventmember=current_eventmember costs=costs event=event %}
+<br>
 <br>
 <p class="h1 text-center">
   <small>Total COST:</small>
   <mark>
     {{event.total_cost}}
   </mark>
+  <i class="fas fa-money-bill-wave"></i>
 </p>
-<br>
-  {% include 'event/snippet/allcosts.html' with eventmember=current_eventmember costs=costs %}
-<br>
-<p class="text-center h1">
-  <small>Total Recieved:</small>
-  <mark>
-    {{event.total_recieved_money}}
-  </mark>
-</p>
-<br>
-  {% include 'event/snippet/allrecievedmoney.html' with eventmember=current_eventmember transactions=transactions %}
+<br><br>
+  {% include 'event/snippet/allrecievedmoney.html' with eventmembers=eventmembers event=event%}
+
+<br><br>
+  <p class="text-center h1">
+    <small>Total Recieved:</small>
+    <mark>
+      {{event.total_recieved_money}}
+    </mark>
+    <i class="fas fa-money-bill-wave"></i>
+  </p>
 <br>
 <p class="text-center h1">
   <small>Total Donation:</small>
   <mark>{{event.total_donation}}</mark>
+  <i class="fas fa-money-bill-wave"></i>
 </p>
-<br>
-  {% include 'event/snippet/allrecievedmoney.html' with eventmember=current_eventmember transactions=donations %}
+<br><br>
+  {% include 'event/snippet/alldonations.html' with eventmembers=eventmembers %}
 <br>
 <p class="text-center h1">
   <small>Total Member Count:</small>
@@ -48,6 +53,7 @@
 <p class="h1 text-center">
   <small>Per Head COST:</small>
   <mark>{{event.per_head_cost}}</mark>
+  <i class="fas fa-money-bill-wave"></i>
 </p>
 <br>
 {% endblock %}

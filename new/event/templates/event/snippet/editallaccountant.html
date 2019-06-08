@@ -13,7 +13,12 @@
         </span>
         <span>
           <span class="badge badge-primary badge-pill">{{accountant.status}}</span>
-          {% if user.is_staff or user == event.creator %}
+          {% if user == accountant.member %}
+            <a class="btn btn-outline-success" href="{% url 'event:accauntant_transaction' accountant.event.id %}">
+              Send Money
+            </a>
+          {% endif %}
+          {% if user.is_superuser or user == event.creator %}
             <a class="btn btn-outline-danger" href="#">
               Revoke Status?
             </a>

@@ -1,0 +1,54 @@
+{% if transactions|length %}
+  <ul class="list-group">
+    {% for transaction in transactions %}
+      <li class="
+        list-group-item
+        {% if transaction.verified_by %}
+          list-group-item-success
+        {% else %}
+          list-group-item-danger
+        {% endif %}
+        list-group-item-action d-flex justify-content-between align-items-center">
+        <span>
+          <mark>
+            {{transaction.amount}}
+            <i class="fas fa-money-bill-wave"></i>
+          </mark>
+          <small>
+            Recieved from --
+            <a href="{% url 'profile:user_profile' transaction.comes_from.userinfo.user.id %}">
+              {{ transaction.comes_from.userinfo.user.username|upper }}
+            </a>
+            at {{transaction.timestamp}}
+          </small>
+        </span>
+        <span>
+          {% if transaction.is_donation %}
+            <p class="badge badge-primary badge-pill">donation</p>
+          {% endif %}
+          {% if transaction.verified_by %}
+            <small>Verified by --</small>
+            <a href="{% url 'profile:user_profile' transaction.verified_by.id %}">
+              {{ transaction.verified_by.username|upper }}
+            </a>
+            <a class="btn btn-outline-danger" href="#">
+              Remove Verification
+            </a>
+            {% elif eventmember.is_accountant or user.is_staff %}
+              <a class="btn btn-outline-success" href="{% url 'event:verify_transaction' transaction.goes_to.eventmember.event.id transaction.id %}">
+                Verify?
+              </a>
+            {% endif %}
+          {% if transaction.comes_from.eventmember.member == request.user or user.is_staff %}
+            <a href="#" class="btn btn-outline-danger">
+              Delete
+            </a>
+          {% endif %}
+        </span>
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <br>
+  <h3 class="lead"><mark>No Money Recieved yet !!!</mark></h3>
+{% endif %}

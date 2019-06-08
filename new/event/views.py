@@ -11,7 +11,7 @@ from polls.models import Question
 from jamah.models import JamahMember, Jamah
 from polls.forms import QuestionCreateForm
 from account.forms import TransactionForm
-from .forms import EventCreateForm, CostCreateForm, UserAddForm
+from .forms import EventCreateForm, CostCreateForm, UserAddForm, SelectHeadAccountantForm
 
 
 def do(request):
@@ -61,41 +61,27 @@ def detail(request, event_id):
             users_to_add.append(left.member)
         candidate_accountants = EventMember.objects.filter(event=event).exclude(is_accountant=True)
         candidate_observers = EventMember.objects.filter(event=event).exclude(is_cost_observer=True)
-        # print(candidate_accountants)
         template = loader.get_template('event/detail.html')
         eventmembers = EventMember.objects.filter(event=event)
         polls = event.polls.all()
         costs = event.cost_set.all()
         pollform = QuestionCreateForm()
-        costform = CostCreateForm()
-        userform = UserAddForm()
-        transaction_form = TransactionForm()
+        head_accountant_form = SelectHeadAccountantForm()
         accountants = EventMember.objects.filter(event=event, is_accountant=True)
-        transaction_form.fields['accountant'].choices = [(accountant.id ,accountant.member.username) for accountant in accountants]
-        choices = [(accountant.id ,accountant.member.username) for accountant in accountants]
-        choices.append((0, 'Myself*'))
-        costform.fields['from_accountant_or_myself'].choices = choices
+        head_accountant_form.fields['head_accountant'].choices = [(accountant.id ,accountant.member.username) for accountant in accountants]
         transactions = []
         for accountant in accountants:
             for transaction in accountant.accountant_account.transaction_ins.all():
                 transactions.append(transaction)
-        donations = event.account.transaction_ins.filter(is_donation = True)
-        total_donation = 0
-        for donation in donations:
-            total_donation += donation.amount
-        # todo use forms.py for this
-        # userform.fields['choice'].choices = users_to_add
         context = {
-            'total_donation': total_donation,
             'candidate_observers': candidate_observers,
             'candidate_accountants': candidate_accountants,
             'costs': costs,
             'transactions': transactions,
-            'transaction_form': transaction_form,
+            'head_accountant_form': head_accountant_form,
             'current_eventmember': current_eventmember,
             'eventmembers': eventmembers,
             'pollForm': pollform,
-            'costform': costform,
             'polls': polls,
             'event': event,
             'users': users_to_add,
@@ -131,6 +117,7 @@ def edit(request, event_id):
 def finance(request, event_id):
     event = Event.objects.get(pk = event_id)
     current_eventmember = EventMember.objects.get(event=event, member=request.user)
+    eventmembers = EventMember.objects.filter(event=event)
     costs = event.cost_set.all()
     transactions = []
     accountants = EventMember.objects.filter(event=event, is_accountant=True)
@@ -154,6 +141,7 @@ def finance(request, event_id):
     event.total_recieved_money = float(event.account.amount) - total_donation
     event.save()
     context = {
+        'eventmembers': eventmembers,
         'total_donation': total_donation,
         'donations': donation_transactions,
         'costs': costs,
@@ -162,6 +150,44 @@ def finance(request, event_id):
         'event': event,
     }
     template = loader.get_template('event/event_finance.html')
+    return HttpResponse(template.render(context, request))
+
+def ammas_finance(request, event_id):
+    event = Event.objects.get(pk = event_id)
+    current_eventmember = EventMember.objects.get(event=event, member=request.user)
+    eventmembers = EventMember.objects.filter(event=event)
+    costs = event.cost_set.all()
+    transactions = []
+    accountants = EventMember.objects.filter(event=event, is_accountant=True)
+    for accountant in accountants:
+        for transaction in accountant.accountant_account.transaction_ins.all():
+            transactions.append(transaction)
+    total_donation = 0.00
+    general_transactions = []
+    donation_transactions = []
+    event.account.amount = 0
+    for transaction in transactions:
+        if transaction.is_donation:
+            donation_transactions.append(transaction)
+            total_donation += float(transaction.amount)
+            event.account.amount += transaction.amount
+        else:
+            general_transactions.append(transaction)
+            event.account.amount = event.account.amount + transaction.amount
+    event.account.save()
+    event.total_donation = total_donation
+    event.total_recieved_money = float(event.account.amount) - total_donation
+    event.save()
+    context = {
+        'eventmembers': eventmembers,
+        'total_donation': total_donation,
+        'donations': donation_transactions,
+        'costs': costs,
+        'transactions': general_transactions,
+        'current_eventmember': current_eventmember,
+        'event': event,
+    }
+    template = loader.get_template('event/ammas_page.html')
     return HttpResponse(template.render(context, request))
 
 def create_cost(request, event_id):
@@ -301,6 +327,22 @@ def add_accountants(request, event_id):
     messages.success(request, 'Successfully added Accountant !!!')
     return HttpResponseRedirect(reverse('event:detail', args = (event_id,)))
 
+def change_head_accountant(request, event_id):
+    event = Event.objects.get(pk = event_id)
+    new_head_accountant_id = request.POST['head_accountant']
+    new_head_accountant = EventMember.objects.get(pk = new_head_accountant_id)
+    try:
+        current_head_accountant = EventMember.objects.get(event=event, is_head_accountant=True)
+        current_head_accountant.is_head_accountant = False
+        current_head_accountant.save()
+    except:
+        messages.warning(request, 'No Head Accountant was set until NOW!!!')
+    new_head_accountant.is_head_accountant = True
+    new_head_accountant.save()
+    messages.success(request, 'Head Accountant Changed Successfully!!!')
+    return HttpResponseRedirect(reverse('event:detail', args = (event_id,)))
+
+
 def add_observers(request, event_id):
     event = Event.objects.get(pk = event_id)
     values = request.POST.getlist('member')
@@ -347,6 +389,39 @@ def make_transaction(request, event_id):
         template = loader.get_template('event/transaction.html')
         return HttpResponse(template.render(context, request))
 
+def accauntant_transaction(request, event_id):
+    event = Event.objects.get(pk = event_id)
+    accountant_sending = EventMember.objects.get(member=request.user, event=event)
+    if request.method == 'POST':
+        amount = request.POST['amount']
+        accountant_receiving_id = request.POST['accountant']
+        accountant_receiving = EventMember.objects.get(pk = accountant_receiving_id)
+        transaction = Transaction(
+            amount=amount,
+            goes_to=accountant_receiving.accountant_account,
+            comes_from=accountant_sending.accountant_account
+        )
+        accountant_receiving.accountant_account.amount = float(accountant_receiving.accountant_account.amount) + float(amount)
+        accountant_sending.accountant_account.amount = float(accountant_sending.accountant_account.amount) - float(amount)
+        accountant_receiving.accountant_account.save()
+        accountant_sending.accountant_account.save()
+        transaction.save()
+        messages.success(request, 'Added Money to the event with your name')
+        return HttpResponseRedirect(reverse('event:detail', args = (event_id,)))
+    else:
+        accountants = EventMember.objects.filter(event=event, is_accountant=True).exclude(member = request.user)
+        data = {
+            'amount': accountant_sending.accountant_account.amount,
+        }
+        transaction_form = TransactionForm(initial = data)
+        transaction_form.fields['accountant'].choices = [(accountant.id ,accountant.member.username) for accountant in accountants]
+        context = {
+            'event': event,
+            'transaction_form': transaction_form
+        }
+        template = loader.get_template('event/transaction.html')
+        return HttpResponse(template.render(context, request))
+
 def verify_transaction(request, event_id, transaction_id):
     event = Event.objects.get(pk = event_id)
     transaction = Transaction.objects.get(pk = transaction_id)
@@ -366,6 +441,8 @@ def verify_transaction(request, event_id, transaction_id):
         event.account.save()
         accountant.accountant_account.amount += transaction.amount
         accountant.accountant_account.save()
+        accountant.total_verified += transaction.amount
+        accountant.save()
         messages.success(request, 'The transaction is Verified !!!')
     else:
         messages.warning(request, 'You are not Authorized to verify !!!')
